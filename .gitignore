@@ -35,3 +35,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+/photos/
+uwcsclub/2024-09-16_21-45-03_UTC.json.xz
+.env
