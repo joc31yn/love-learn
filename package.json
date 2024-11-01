@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@fullcalendar/interaction": "^6.1.15",
+    "@fullcalendar/timegrid": "^6.1.15"
+  }
+}
