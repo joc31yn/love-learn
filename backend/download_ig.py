@@ -3,7 +3,6 @@ from datetime import datetime
 import sys
 import instaloader
 
-
 def download_ig_profile(username):
     """
     downloads ig profile of username
@@ -21,6 +20,5 @@ def download_ig_profile(username):
                 ig.download_post(post, target=ig_profile.username)
         else:
             break
-
 
 download_ig_profile("uwcsclub")
