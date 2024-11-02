@@ -1,15 +1,19 @@
 "use client";
 
-import React from "react";
+import React, {useState} from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-
 import { EventProp, EventProps, FetchEvents } from "./eventObtainer";
+import EventPopUp from "./EventPopUp";
 
 export default function Calendar() {
   const eventsInProps = FetchEvents();
+
+  const [modal, setModal] = useState(true);
+  const toggleModal = () => setModal(!modal);
+ 
   const calendarEvents = eventsInProps.events.map((event) => ({
     title: event.eventName,
     start: `${event.date}T${event.time}`,
@@ -19,11 +23,15 @@ export default function Calendar() {
       description: event.description,
     },
   }));
+  const dayPopUp = () =>{
+    setModal(true);
+  }
   return (
     <div>
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         initialView={"dayGridMonth"}
+        dateClick={dayPopUp}
         headerToolbar={{
           start: "today prev,next",
           center: "title",
@@ -51,6 +59,7 @@ export default function Calendar() {
           </div>
         )}
       />
+      <EventPopUp modal ={modal} toggleModal={toggleModal}/>
     </div>
   );
 }
