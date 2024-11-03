@@ -6,6 +6,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { EventProp } from '@/api/events/route';
+import EventPopUp from "./popup/EventPopUp";
 
 async function fetchEvents(): Promise<EventProp[]> {
   const res = await fetch('/api/events', {
@@ -23,6 +24,7 @@ async function fetchEvents(): Promise<EventProp[]> {
 }
 
 export default function Calendar() {
+  const [modal, setModal] = useState(true);
   const [calendarEvents, setCalendarEvents] = useState([]);
 
   useEffect(() => {
@@ -49,18 +51,24 @@ export default function Calendar() {
   
     fetchData();
   }, []); // [] means run only on mount
-  
+
+  const toggleModal = () => setModal(!modal);
+  const dayPopUp = () =>{
+    setModal(true);
+  }
+
   return (
     <div>
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         initialView={"dayGridMonth"}
+        eventClick={dayPopUp}
         headerToolbar={{
           start: "today prev,next",
           center: "title",
           end: "dayGridMonth,timeGridWeek,timeGridDay",
         }}
-        height={"75vh"}
+        height={"80vh"}
         events={calendarEvents}
         eventContent={(eventInfo) => (
           <div>
@@ -80,6 +88,7 @@ export default function Calendar() {
           </div>
         )}
       />
+      <EventPopUp modal ={modal} toggleModal={toggleModal}/>
     </div>
   );
 }
