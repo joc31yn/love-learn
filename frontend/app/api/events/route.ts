@@ -1,16 +1,8 @@
-// app/api/events/route.ts
 'use server';
 
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
-
-export interface EventProp {
-  name: string;
-  start_date: string;
-  end_date: string;
-  location: string;
-  description: string;
-}
+import { EventProp } from '@/utils/types';
 
 export async function GET() {
   // Get the authenticated user
