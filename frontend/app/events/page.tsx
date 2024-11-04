@@ -10,6 +10,3 @@ export default async function Events() {
   );
   return 
 }
-/*
-<pre>{JSON.stringify(notes, null, 2)}</pre>
-*/

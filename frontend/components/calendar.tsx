@@ -5,7 +5,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import { EventProp } from '@/api/events/route';
+import { EventProp } from '@/utils/types';
 import EventPopUp from "./popup/EventPopUp";
 
 async function fetchEvents(): Promise<EventProp[]> {
