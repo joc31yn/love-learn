@@ -15,7 +15,6 @@ const EventPopUp: React.FC<EventPopUpProps> = ({ modal, toggleModal }) => {
     }
     return (
         <>
-            <button onClick={toggleModal}>open</button>
             {modal && (
                 <div className='modal'>
                     <div className='overlay'>
