@@ -6,9 +6,11 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { EventProp } from '@/utils/types';
+import AddEventPopUp from '@/components/popup/AddEventPopUp';
 import EventPopUp from "@/components/popup/EventPopUp";
 import EventAdder from "@/components/calAddPage";
 import { Button } from "@/components/ui/button";
+import { EventClickArg } from "@fullcalendar/core";
 
 async function fetchEvents(): Promise<EventProp[]> {
   const res = await fetch('/api/events', {
@@ -18,15 +20,14 @@ async function fetchEvents(): Promise<EventProp[]> {
 
   if (!res.ok) {
     console.error('Failed to fetch events');
-    return []; 
+    return [];
   }
 
   const data = await res.json();
-  return data.events; 
+  return data.events;
 }
 
 export default function Calendar() {
-  const [modal, setModal] = useState(false);
   const [calendarEvents, setCalendarEvents] = useState([]);
   //Hook for delete events:
   const [delAttempt, setDelAttempt] = useState(false);
@@ -36,7 +37,7 @@ export default function Calendar() {
     const fetchData = async () => {
       try {
         const eventsInProps = await fetchEvents();
-  
+
         // Check if eventsInProps is an array to prevent errors
         const formattedEvents = (eventsInProps || []).map((event: EventProp) => ({
           title: event.name,
@@ -47,15 +48,34 @@ export default function Calendar() {
             description: event.description,
           },
         }));
-  
+
         setCalendarEvents(formattedEvents);
       } catch (error) {
         console.error("Error fetching events:", error);
       }
     };
-  
+
     fetchData();
   }, []); // [] means run only on mount
+
+  const [modal, setModal] = useState(false);
+  const [addEventBtn, setAddEventBtn] = useState(false);
+  const toggleModal = () => setModal(!modal);
+  const toggleAddEvent = () => setAddEventBtn(!addEventBtn);
+  const addPopUp =() =>{
+    setAddEventBtn(true);
+  }
+  // MODIFIED: if the user is attempting to delete, the event will be deleted on click
+  const dayPopUp = (info: EventClickArg) => {
+    if (delAttempt) {
+      
+      removeSelectedEvent(info.event);
+      handleDelReq();
+    } else {
+      setModal(true);
+    }
+    
+  };
 
   // Function to generate an unique ID for an event. Note that if two events are identical
   //in every field, they will be regarded as identical
@@ -135,23 +155,9 @@ export default function Calendar() {
   };
   //##################################
 
-  const toggleModal = () => setModal(!modal);
-
-
-  // MODIFIED: if the user is attempting to delete, the event will be deleted on click
-  const dayPopUp = (info: EventClickArg) => {
-    if (delAttempt) {
-      
-      removeSelectedEvent(info.event);
-      handleDelReq();
-    } else {
-      setModal(true);
-    }
-    
-  };
-
   return (
     <div>
+      <Button onClick={addPopUp}>Add Event</Button>
       <EventAdder addInfo={addEvent} />
       <Button onClick={handleDelReq}>{delButton()}</Button>
       <FullCalendar
@@ -184,6 +190,9 @@ export default function Calendar() {
         )}
       />
       <EventPopUp modal={modal} toggleModal={toggleModal} />
+      <AddEventPopUp
+        addEventBtn={addEventBtn}
+        toggleAddEvent={toggleAddEvent}></AddEventPopUp>
     </div>
   );
 }
