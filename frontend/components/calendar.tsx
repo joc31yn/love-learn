@@ -26,7 +26,7 @@ async function fetchEvents(): Promise<EventProp[]> {
 }
 
 export default function Calendar() {
-  const [modal, setModal] = useState(true);
+  const [modal, setModal] = useState(false);
   const [calendarEvents, setCalendarEvents] = useState([]);
   //Hook for delete events:
   const [delAttempt, setDelAttempt] = useState(false);
