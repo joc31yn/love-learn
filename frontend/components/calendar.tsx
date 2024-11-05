@@ -7,6 +7,8 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { EventProp } from '@/utils/types';
 import EventPopUp from "./popup/EventPopUp";
+import { Button } from "./ui/button";
+import AddEventPopUp from "./popup/AddEventPopUp";
 
 async function fetchEvents(): Promise<EventProp[]> {
   const res = await fetch('/api/events', {
@@ -16,22 +18,21 @@ async function fetchEvents(): Promise<EventProp[]> {
 
   if (!res.ok) {
     console.error('Failed to fetch events');
-    return []; 
+    return [];
   }
 
   const data = await res.json();
-  return data.events; 
+  return data.events;
 }
 
 export default function Calendar() {
-  const [modal, setModal] = useState(false);
   const [calendarEvents, setCalendarEvents] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const eventsInProps = await fetchEvents();
-  
+
         // Check if eventsInProps is an array to prevent errors
         const formattedEvents = (eventsInProps || []).map((event: EventProp) => ({
           title: event.name,
@@ -42,23 +43,31 @@ export default function Calendar() {
             description: event.description,
           },
         }));
-  
+
         setCalendarEvents(formattedEvents);
       } catch (error) {
         console.error("Error fetching events:", error);
       }
     };
-  
+
     fetchData();
   }, []); // [] means run only on mount
 
+  const [modal, setModal] = useState(false);
+  const [addEventBtn, setAddEventBtn] = useState(false);
   const toggleModal = () => setModal(!modal);
-  const dayPopUp = () =>{
+  const toggleAddEvent = () => setAddEventBtn(!addEventBtn);
+  
+  const dayPopUp = () => {
     setModal(true);
+  }
+  const addPopUp =() =>{
+    setAddEventBtn(true);
   }
 
   return (
     <div>
+      <Button onClick={addPopUp}>Add Event</Button>
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         initialView={"dayGridMonth"}
@@ -88,7 +97,10 @@ export default function Calendar() {
           </div>
         )}
       />
-      <EventPopUp modal ={modal} toggleModal={toggleModal}/>
+      <EventPopUp modal={modal} toggleModal={toggleModal} />
+      <AddEventPopUp
+        addEventBtn={addEventBtn}
+        toggleAddEvent={toggleAddEvent}></AddEventPopUp>
     </div>
   );
 }

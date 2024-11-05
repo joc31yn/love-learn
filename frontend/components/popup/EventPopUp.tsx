@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import './EventPopUp.css';
+import { Button } from '../ui/button';
 
 interface EventPopUpProps {
     modal: boolean;
@@ -24,7 +25,8 @@ const EventPopUp: React.FC<EventPopUpProps> = ({ modal, toggleModal }) => {
                                 Phasellus a viverra elit. Vivamus nec scelerisque dolor.
                                 Mauris sed placerat neque. Nullam arcu neque, mattis ac interdum vitae,
                                 volutpat sed nulla. Fusce vel eros ut nibh faucibus venenatis.</p>
-                            <button onClick={toggleModal} className='close'>CLOSE</button>
+                                <br></br>
+                            <Button onClick={toggleModal}>CLOSE</Button>
                         </div>
                     </div>
                 </div>
