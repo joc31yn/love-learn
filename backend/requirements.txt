@@ -4,3 +4,4 @@ pillow
 typing-extensions
 python-dotenv
 google-generativeai
+supabase

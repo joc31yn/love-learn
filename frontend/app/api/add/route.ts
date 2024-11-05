@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
   const { name, start_date, end_date, location, description }: EventProp = await req.json();
     // Check if user is authenticated
     const {
-    data: { user }
+      data: { user }
     } = await supabase.auth.getUser();
 
     if (!user) {
