@@ -16,7 +16,7 @@ class Event(typing.TypedDict):
     """
     Make sure start_date and end_date are in the form YYYY-MM-DD
     """
-    name: str
+    title: str
     start_date: str
     end_date: str
     location: str
@@ -25,7 +25,7 @@ class Event(typing.TypedDict):
 # Dataclass decorator for class validation
 @dataclass
 class ParsedEvent:
-    name: str
+    title: str
     start_date: datetime # Data validation hook
     end_date: datetime
     location: str
@@ -53,42 +53,42 @@ class InstagramScraper(AbstractDataSource):
     username: str
     ig: instaloader.Instaloader
     key: str
+    date: str
 
-    def __init__(self, username):
+    def __init__(self, username, date=None):
         super().__init__("https://instagram.com")
         self.username = username
         self.ig = instaloader.Instaloader()
-        self.key = os.getenv("GEM_API_KEY")
+        self.key = "AIzaSyBUUcf8QEvc9CSmOPuBRG3KVuWZ6cJUUkI"
+        self.date = date 
 
     def scrape_page(self, **kwargs):
         """
         Downloads Instagram posts from a user's profile.
         """
         
-        since = kwargs.get('since', datetime(2024, 9, 1))
+        since_str = kwargs.get('since', self.date)
+        since = datetime.strptime(since_str, "%Y-%m-%d")
         ig_profile = instaloader.Profile.from_username(self.ig.context, self.username)
         """
-        posts = []
         for post in ig_profile.get_posts():
             date = post.date
             if date >= since:
                 if post.typename == 'GraphImage':
                     self.ig.download_post(post, target=ig_profile.username)
-                    posts.append(post)
             else:
                 break
-        print(posts)
         """
-        genai.configure(api_key=self.key)
+        genai.configure(api_key="AIzaSyBUUcf8QEvc9CSmOPuBRG3KVuWZ6cJUUkI")
         directory = f"./{ig_profile.username}"
         events = []
         model = genai.GenerativeModel("gemini-1.5-flash", generation_config={"response_mime_type":"application/json", "response_schema": Event})
         for name in os.listdir(directory):
             if name.endswith((".jpg", ".png", ".jpeg")):
                 prompt = "The image provided is a poster for an event. Get information from the event in JSON format, making sure start date and end date are of form YYYY-MM-DD. No parentheses allowed. If only one date, set it equal to both start date and ewnd date. If it is not an event, return all values as empty strings."
-                response = response = model.generate_content([prompt, PIL.Image.open(directory + '/' + name)])
+                response = model.generate_content([prompt, PIL.Image.open(directory + '/' + name)])
                 text = response.text
-                print(text)
+                #print(text)
                 data = {}
                 # JSON text sanity check here
                 try: 
@@ -108,6 +108,7 @@ class InstagramScraper(AbstractDataSource):
                     # If date validation fails, set start_date and end_date to empty strings
                     data["start_date"] = ""
                     data["end_date"] = ""
+                print(data)
                 events.append(data)
         return events
 
@@ -128,7 +129,7 @@ class InstagramScraper(AbstractDataSource):
         Parses a post to extract event information.
         """
         event = {
-            "name": ev["name"],
+            "title": ev["title"],
             "start_date": ev["start_date"],
             "end_date": ev["end_date"],
             "location": ev["location"],
@@ -138,8 +139,5 @@ class InstagramScraper(AbstractDataSource):
             return None
         return event
 
-if __name__ == '__main__':
-    #app.run()
-    print(InstagramScraper("uwcsclub").get_events())
 
 
