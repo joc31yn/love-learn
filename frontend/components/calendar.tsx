@@ -59,11 +59,18 @@ export default function Calendar() {
   }, []); // [] means run only on mount
 
   const [modal, setModal] = useState(false);
-  const [addEventBtn, setAddEventBtn] = useState(false);
+  const [togglePopup, settogglePopup] = useState(false);
   const toggleModal = () => setModal(!modal);
-  const toggleAddEvent = () => setAddEventBtn(!addEventBtn);
+  const toggleAddEvent = () => {
+    console.log("add");
+    settogglePopup(false);
+  }
+  const toggleRemoveEvent = () => {
+    console.log("delete");
+    settogglePopup(false);
+  }
   const addPopUp =() =>{
-    setAddEventBtn(true);
+    settogglePopup(true);
   }
   // MODIFIED: if the user is attempting to delete, the event will be deleted on click
   const dayPopUp = (info: EventClickArg) => {
@@ -191,8 +198,10 @@ export default function Calendar() {
       />
       <EventPopUp modal={modal} toggleModal={toggleModal} />
       <AddEventPopUp
-        addEventBtn={addEventBtn}
-        toggleAddEvent={toggleAddEvent}></AddEventPopUp>
+        togglePopup={togglePopup}
+        toggleAddEvent={toggleAddEvent}
+        toggleRemoveEvent={toggleRemoveEvent}>
+      </AddEventPopUp>
     </div>
-  );
+  );  
 }
