@@ -4,22 +4,15 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
-import './EventPopUp.css';
+//import './EventPopUp.css';
 import { EventProp } from '@/utils/types';
 // import { createClient } from "@/utils/supabase/server";
-import { createClient } from '@supabase/supabase-js';
 
 interface AddEventPopUpProps {
     togglePopup: boolean;
     toggleAddEvent: () => void;
     toggleRemoveEvent: () => void;
 }
-
-// CreateClient in client component
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
-);
 
 async function addEvent(eventProp: EventProp) {
     const response = await fetch('/api/add', {
@@ -42,7 +35,7 @@ async function addEvent(eventProp: EventProp) {
 const AddEventPopUp: React.FC<AddEventPopUpProps> = ({ togglePopup, toggleAddEvent, toggleRemoveEvent }) => {
     
     const emptyEventData = {
-        name: '',
+        title: '',
         start_date: '',
         end_date: '',
         location: '',
@@ -57,15 +50,18 @@ const AddEventPopUp: React.FC<AddEventPopUpProps> = ({ togglePopup, toggleAddEve
 
     useEffect(() => {
         // Add or remove the modal class based on the togglePopup state
-        if (togglePopup) {
-            document.body.classList.add('active-modal');
-        } else {
-            document.body.classList.remove('active-modal');
+        if (typeof window !== "undefined") {
+            if (togglePopup) {
+                document.body.classList.add('active-modal');
+            } else {
+                document.body.classList.remove('active-modal');
+            }
         }
     }, [togglePopup]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
+        console.log(name);
         setEventData((prevData: any) => ({
             ...prevData,
             [name]: value
@@ -102,7 +98,7 @@ const AddEventPopUp: React.FC<AddEventPopUpProps> = ({ togglePopup, toggleAddEve
                             <Label>Title:</Label>
                             <Input
                                 type="text"
-                                name="name"
+                                name="title"
                                 placeholder="Event title"
                                 value={eventData.title}
                                 onChange={handleInputChange}

@@ -4,7 +4,7 @@ import { EventProp } from '@/utils/types'; // Adjust the path as necessary
 
 export async function POST(req: NextRequest) {
   const supabase = await createClient();
-  const { name, start_date, end_date, location, description }: EventProp = await req.json();
+  const { title, start_date, end_date, location, description }: EventProp = await req.json();
     // Check if user is authenticated
     const {
       data: { user }
@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     .from('user_events')
     .insert([{
       user_id: user.id,
-      title: name,
+      title: title,
       description,
       start_date,
       end_date,

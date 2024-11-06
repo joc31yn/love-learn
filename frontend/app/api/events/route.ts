@@ -7,11 +7,10 @@ import { EventProp } from '@/utils/types';
 export async function GET() {
   // Get the authenticated user
   const supabase = await createClient();
-
+  console.log(supabase);
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
   let result, fetchError;
   if (user) {
     // Fetch events from user_events if the user is authenticated
@@ -31,13 +30,14 @@ export async function GET() {
     fetchError = error;
   }
 
+  console.log("ERROR", fetchError);
   if (fetchError) {
     console.error('Error fetching events:', fetchError.message);
     return NextResponse.json({ events: [] }, { status: 500 });
   }
 
   const events: EventProp[] = (result || []).map((event: any) => ({
-    name: event.title,
+    title: event.title,
     start_date: event.start_date,
     end_date: event.end_date,
     location: event.location,

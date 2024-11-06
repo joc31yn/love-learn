@@ -16,7 +16,6 @@ async function fetchEvents(): Promise<EventProp[]> {
     method: 'GET',
     cache: 'no-store', // Ensures a fresh fetch call each time
   });
-
   if (!res.ok) {
     console.error('Failed to fetch events');
     return [];
@@ -35,38 +34,37 @@ export default function Calendar() {
 
   const prevChangeCal = useRef(changeCal);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const eventsInProps = await fetchEvents();
+  const fetchData = async () => {
+    try {
+      const eventsInProps = await fetchEvents();
+      console.log(eventsInProps);
+      // Check if eventsInProps is an array to prevent errors
+      const formattedEvents = (eventsInProps || []).map((event: EventProp) => ({
+        title: event.title,
+        start: event.start_date,
+        end: event.end_date,
+        extendedProps: {
+          location: event.location,
+          description: event.description,
+        },
+      }));
 
-        // Check if eventsInProps is an array to prevent errors
-        const formattedEvents = (eventsInProps || []).map((event: EventProp) => ({
-          title: event.title,
-          start: event.start_date,
-          end: event.end_date,
-          extendedProps: {
-            location: event.location,
-            description: event.description,
-          },
-        }));
-
-        setCalendarEvents(formattedEvents);
-      } catch (error) {
-        console.error("Error fetching events:", error);
-      }
-    };
-
-    // HOOK START
-    if (prevChangeCal.current === undefined) {
-      fetchData();
+      setCalendarEvents(formattedEvents);
+    } catch (error) {
+      console.error("Error fetching events:", error);
     }
-    else if (prevChangeCal.current === false && changeCal === true) {
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (prevChangeCal.current === false && changeCal === true) {
       fetchData();
       setChangeCal(false);
     }
     prevChangeCal.current = changeCal;
-    console.log("done");
   }, [changeCal]); 
 
   const [modal, setModal] = useState(false);
@@ -86,8 +84,7 @@ export default function Calendar() {
   // MODIFIED: if the user is attempting to delete, the event will be deleted on click
   const dayPopUp = (info: EventClickArg) => {
     if (delAttempt) {
-      console.log(info.event);
-      removeSelectedEvent(info.event);
+      removeSelectedEvent(info);
       handleDelReq();
     } else {
       setModal(true);
@@ -96,25 +93,24 @@ export default function Calendar() {
   };
 
   // Function to delete event:
-  const removeSelectedEvent = async (toDel: any) => {
-    /*
+  const removeSelectedEvent = async (toDel: EventClickArg) => {
+    console.log(toDel.event.title);
     const response = await fetch('/api/delete', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ toDel.title })
+      body: JSON.stringify({ title: toDel.event.title })
     });
-
+    console.log("done");
     // Check if the response was successful
     if (!response.ok) {
       console.error('Failed to delete event:', await response.text());
       return;
     }
-      */
 
     // Update calendar rendering
-    //setChangeCal(true);
+    setChangeCal(true);
   };
 
   //Handles the text and delete status in the button for deleting events
