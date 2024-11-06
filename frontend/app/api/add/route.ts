@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     } = await supabase.auth.getUser();
 
     if (!user) {
-    return NextResponse.json({ message: 'User not authenticated' }, { status: 500 });
+      return NextResponse.json({ message: 'User not authenticated' }, { status: 500 });
     }
 
     // Insert the event associated with the user's ID

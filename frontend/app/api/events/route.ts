@@ -17,8 +17,8 @@ export async function GET() {
     // Fetch events from user_events if the user is authenticated
     const { data, error } = await supabase
       .from('user_events')
-      .select('title, description, event_date, location')
-      .eq('id', user.id);
+      .select('title, start_date, end_date, description, location')
+      .eq('user_id', user.id);
     result = data;
     fetchError = error;
   } 

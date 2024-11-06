@@ -3,7 +3,7 @@ import { createClient } from '@/utils/supabase/server';
 
 export async function POST(req: NextRequest) {
   const supabase = await createClient();
-  const { name } = await req.json();
+  const { title } = await req.json();
 
   // Check if user is authenticated
   const {
@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
       .from('user_events')
       .delete()
       .eq('user_id', user.id)
-      .eq('title', name);
+      .eq('title', title);
   
   if (deleteError) {
       return NextResponse.json({ message: 'Deletion error', details: deleteError.message }, { status: 500 });

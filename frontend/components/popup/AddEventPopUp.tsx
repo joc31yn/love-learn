@@ -21,15 +21,39 @@ const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
 );
 
+async function addEvent(eventProp: EventProp) {
+    const response = await fetch('/api/add', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(eventProp),
+    });
+
+    const data = await response.json();
+    
+    if (!response.ok) {
+        console.error('Error:', data);
+    } else {
+        console.log('Success:', data.message);
+    }
+}
+
 const AddEventPopUp: React.FC<AddEventPopUpProps> = ({ togglePopup, toggleAddEvent, toggleRemoveEvent }) => {
     
-    const [eventData, setEventData] = useState<EventProp>({
+    const emptyEventData = {
         name: '',
         start_date: '',
         end_date: '',
         location: '',
         description: ''
-    });
+    };
+
+    const [eventData, setEventData] = useState(emptyEventData);
+
+    const resetEventData = () => {
+        setEventData(emptyEventData);
+    };
 
     useEffect(() => {
         // Add or remove the modal class based on the togglePopup state
@@ -52,9 +76,14 @@ const AddEventPopUp: React.FC<AddEventPopUpProps> = ({ togglePopup, toggleAddEve
         console.log("Event Data:", eventData); 
         // Issue: Not a server component, cannot use supabase utils auth
         // Fix: Directly inject auth using createClient param overloading
-        
+        addEvent(eventData);
         // https://supabase.com/docs/reference/javascript/auth-getsession
         toggleAddEvent(); // Optionally close the popup after adding
+    };
+
+    const handleRemoveEvent = async () => {
+        resetEventData(); // Remove any saved values
+        toggleRemoveEvent(); // Optionally close the popup after closing
     };
 
     return (
@@ -64,7 +93,7 @@ const AddEventPopUp: React.FC<AddEventPopUpProps> = ({ togglePopup, toggleAddEve
                     <div className='overlay'>
                         <div className='event-content'>
                             <button
-                                onClick={toggleRemoveEvent} // Close the modal
+                                onClick={handleRemoveEvent} // Close the modal
                                 className="absolute top-2 right-2 text-gray-600 hover:text-gray-800 focus:outline-none"
                             >
                                 <FontAwesomeIcon icon={faTimes} size="lg" />
@@ -75,7 +104,7 @@ const AddEventPopUp: React.FC<AddEventPopUpProps> = ({ togglePopup, toggleAddEve
                                 type="text"
                                 name="name"
                                 placeholder="Event title"
-                                value={eventData.name}
+                                value={eventData.title}
                                 onChange={handleInputChange}
                             />
 

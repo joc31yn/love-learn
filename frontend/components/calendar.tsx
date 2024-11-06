@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -8,7 +8,6 @@ import interactionPlugin from "@fullcalendar/interaction";
 import { EventProp } from '@/utils/types';
 import AddEventPopUp from '@/components/popup/AddEventPopUp';
 import EventPopUp from "@/components/popup/EventPopUp";
-import EventAdder from "@/components/calAddPage";
 import { Button } from "@/components/ui/button";
 import { EventClickArg } from "@fullcalendar/core";
 
@@ -31,7 +30,10 @@ export default function Calendar() {
   const [calendarEvents, setCalendarEvents] = useState([]);
   //Hook for delete events:
   const [delAttempt, setDelAttempt] = useState(false);
-  const [confirmDel, setConfirmDel] = useState(false);  
+  const [confirmDel, setConfirmDel] = useState(false);
+  const [changeCal, setChangeCal] = useState(false);
+
+  const prevChangeCal = useRef(changeCal);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,7 +42,7 @@ export default function Calendar() {
 
         // Check if eventsInProps is an array to prevent errors
         const formattedEvents = (eventsInProps || []).map((event: EventProp) => ({
-          title: event.name,
+          title: event.title,
           start: event.start_date,
           end: event.end_date,
           extendedProps: {
@@ -55,27 +57,36 @@ export default function Calendar() {
       }
     };
 
-    fetchData();
-  }, []); // [] means run only on mount
+    // HOOK START
+    if (prevChangeCal.current === undefined) {
+      fetchData();
+    }
+    else if (prevChangeCal.current === false && changeCal === true) {
+      fetchData();
+      setChangeCal(false);
+    }
+    prevChangeCal.current = changeCal;
+    console.log("done");
+  }, [changeCal]); 
 
   const [modal, setModal] = useState(false);
   const [togglePopup, settogglePopup] = useState(false);
   const toggleModal = () => setModal(!modal);
   const toggleAddEvent = () => {
-    console.log("add");
     settogglePopup(false);
+    setChangeCal(true);
   }
   const toggleRemoveEvent = () => {
-    console.log("delete");
     settogglePopup(false);
   }
-  const addPopUp =() =>{
+  const addPopUp = () => {
     settogglePopup(true);
   }
+
   // MODIFIED: if the user is attempting to delete, the event will be deleted on click
   const dayPopUp = (info: EventClickArg) => {
     if (delAttempt) {
-      
+      console.log(info.event);
       removeSelectedEvent(info.event);
       handleDelReq();
     } else {
@@ -84,64 +95,26 @@ export default function Calendar() {
     
   };
 
-  // Function to generate an unique ID for an event. Note that if two events are identical
-  //in every field, they will be regarded as identical
-  function concat(
-    a: string = "",
-    b: string = "",
-    c: string = "",
-    d: string = "",
-    e: string = ""
-  ) {
-    let str = "";
-    str += a + b + c + d + e;
-    return str;
-  }
-
-  // Add event (poorly implemented) for testing, delete at will
-  const addEvent = (newInfo: EventProp) => {
-    console.log("ADD EVENT is called");
-    try {
-      const nIFormatted = {
-        id: concat(
-          newInfo.name,
-          newInfo.start_date,
-          newInfo.end_date,
-          newInfo.location,
-          newInfo.description
-        ),
-        title: newInfo.name,
-        start: newInfo.start_date,
-        end: newInfo.end_date,
-        extendedProps: {
-          location: newInfo.location,
-          description: newInfo.description,
-        },
-      };
-      setCalendarEvents((prevEvents) => [...prevEvents, nIFormatted]);
-    } catch (error) {
-      console.error("Error adding events:", error);
-    }
-  };
-
-  function areEventsIdentical(event1: any, event2: any): boolean {
-    console.log(event1.id);
-    console.log(event2.id);
-    return event1.id == event2.id;
-  }
-
   // Function to delete event:
-  const removeSelectedEvent = (toDel: any) => {
-    try {
-      setCalendarEvents(
-        calendarEvents.filter(
-          (event) => event && !areEventsIdentical(event, toDel)
-        )
-      );
-    } catch (error) {
-      console.error("remove not successful", error);
+  const removeSelectedEvent = async (toDel: any) => {
+    /*
+    const response = await fetch('/api/delete', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ toDel.title })
+    });
+
+    // Check if the response was successful
+    if (!response.ok) {
+      console.error('Failed to delete event:', await response.text());
+      return;
     }
-    console.log("DELETE ATTEMPT FINISHED");
+      */
+
+    // Update calendar rendering
+    //setChangeCal(true);
   };
 
   //Handles the text and delete status in the button for deleting events
@@ -165,7 +138,6 @@ export default function Calendar() {
   return (
     <div>
       <Button onClick={addPopUp}>Add Event</Button>
-      <EventAdder addInfo={addEvent} />
       <Button onClick={handleDelReq}>{delButton()}</Button>
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
