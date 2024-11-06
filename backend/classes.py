@@ -79,7 +79,7 @@ class InstagramScraper(AbstractDataSource):
             else:
                 break
         """
-        genai.configure(api_key="AIzaSyBUUcf8QEvc9CSmOPuBRG3KVuWZ6cJUUkI")
+        genai.configure(api_key="")
         directory = f"./{ig_profile.username}"
         events = []
         model = genai.GenerativeModel("gemini-1.5-flash", generation_config={"response_mime_type":"application/json", "response_schema": Event})
