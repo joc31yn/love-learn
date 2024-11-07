@@ -36,7 +36,6 @@ jobs:
             echo "Unable to determine package manager"
             exit 1
           fi
-        working-directory: ./frontend
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -45,9 +44,7 @@ jobs:
 
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} install
-
-      - name: Install dependencies
-        run: ${{ steps.detect-package-manager.outputs.manager }} install
+        working-directory: ./frontend
 
   # Lint job
   lint:
