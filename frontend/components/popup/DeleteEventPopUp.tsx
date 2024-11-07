@@ -3,8 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
-import { EventProp, emptyEventData } from "@/utils/types";
-import { EventClickArg } from "@fullcalendar/core";
+import { EventProp } from "@/utils/types";
 
 interface DeleteEventPopUpProps {
     event: EventProp

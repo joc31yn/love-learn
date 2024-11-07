@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -42,8 +42,7 @@ const AddEventPopUp: React.FC<AddEventPopUpProps> = ({ togglePopup, toggleAddEve
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        console.log(name);
-        setEventData((prevData: any) => ({
+        setEventData((prevData: EventProp) => ({
             ...prevData,
             [name]: value
         }));

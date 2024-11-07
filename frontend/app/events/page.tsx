@@ -1,8 +1,5 @@
-import { createClient } from '@/utils/supabase/server';
 import React from "react";
 import Calendar from "@/components/calendar";
-import { Button } from "../../components/ui/button";
-import Link from 'next/link';
 
 export default async function Events() {
   return (
