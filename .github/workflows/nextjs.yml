@@ -3,9 +3,11 @@ name: build, lint, and test frontend
 
 on:
   push:
+    branches: ["main"]
     paths:
       - "frontend/**"  # Only trigger on changes in the frontend directory
   pull_request:
+    branches: ["main"]
     paths:
       - "frontend/**"  # Only trigger on changes in the frontend directory
   workflow_dispatch:
@@ -40,21 +42,11 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Cache dependencies
-        uses: actions/cache@v4
-        with:
-          path: ./frontend/node_modules
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('frontend/package-lock.json', 'frontend/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-nextjs-
+      - name: Install dependencies
+        run: ${{ steps.detect-package-manager.outputs.manager }} install
 
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} install
-        working-directory: ./frontend  # Restrict to frontend directory
-
-      - name: Install dependencies
-        run: ${{ steps.detect-package-manager.outputs.manager }} install
-        working-directory: ./frontend  # Restrict to frontend directory
 
   # Lint job
   lint:
@@ -63,7 +55,7 @@ jobs:
     steps:
       - name: Run ESLint
         run: ${{ needs.setup.outputs.manager }} run lint
-        working-directory: ./frontend
+        working-directory: /frontend
 
   # Test job
   test:
@@ -72,7 +64,7 @@ jobs:
     steps:
       - name: Run Tests
         run: ${{ needs.setup.outputs.manager }} run test
-        working-directory: ./frontend
+        working-directory: /frontend
 
   # Build job
   build:
@@ -81,4 +73,4 @@ jobs:
     steps:
       - name: Build Next.js site
         run: ${{ needs.setup.outputs.runner }} next build
-        working-directory: ./frontend
+        working-directory: /frontend
