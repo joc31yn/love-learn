@@ -5,20 +5,21 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import { emptyEventData, EventProp } from '@/utils/types';
-import AddEventPopUp from '@/components/popup/AddEventPopUp';
+import { emptyEventData, EventProp } from "@/utils/types";
+import AddEventPopUp from "@/components/popup/AddEventPopUp";
+import SyncPopUp from "./popup/SyncPopUp";
 import EventPopUp from "@/components/popup/EventPopUp";
 import { Button } from "@/components/ui/button";
 import { EventClickArg } from "@fullcalendar/core";
 import DeleteEventPopUp from "@/components/popup/DeleteEventPopUp";
 
 async function fetchEvents(): Promise<EventProp[]> {
-  const res = await fetch('/api/events', {
-    method: 'GET',
-    cache: 'no-store', // Ensures a fresh fetch call each time
+  const res = await fetch("/api/events", {
+    method: "GET",
+    cache: "no-store", // Ensures a fresh fetch call each time
   });
   if (!res.ok) {
-    console.error('Failed to fetch events');
+    console.error("Failed to fetch events");
     return [];
   }
 
@@ -40,6 +41,8 @@ export default function Calendar() {
   const prevChangeCal = useRef(changeCal);
   // State for eventProp
   const [selectedEvent, setSelectedEvent] = useState(emptyEventData);
+  // State for SyncPopUp
+  const [syncPopUpDisp, setSyncPopUpDisp] = useState(false);
 
   const fetchData = async () => {
     try {
@@ -72,35 +75,38 @@ export default function Calendar() {
       setChangeCal(false);
     }
     prevChangeCal.current = changeCal;
-  }, [changeCal]); 
+  }, [changeCal]);
 
   useEffect(() => {
     // This effect runs whenever delAttempt changes
     //console.log(delAttempt);
     if (delAttempt) {
       setButtonText("Cancel Deletion");
-    } 
-    else {
+    } else {
       setButtonText("Delete Event");
     }
   }, [delAttempt]);
 
   const toggleModal = () => setModal(!modal);
+  const toggleSyncDisp = () => setSyncPopUpDisp(!syncPopUpDisp);
+  const openSyncPopUp = () => setSyncPopUpDisp(true);
+
+  // PLACE HOLDER FOR ANY ONCLOSE ACTION FOR SYNC
+  const syncOnClose = () => {};
 
   const convertToEventProp = (info: EventClickArg): EventProp => ({
     title: info.event.title,
-    start_date: info.event.start ? info.event.start.toISOString() : '',
-    end_date: info.event.end ? info.event.end.toISOString() : '',
-    location: info.event.extendedProps.location || '',
-    description: info.event.extendedProps.description || '',
+    start_date: info.event.start ? info.event.start.toISOString() : "",
+    end_date: info.event.end ? info.event.end.toISOString() : "",
+    location: info.event.extendedProps.location || "",
+    description: info.event.extendedProps.description || "",
   });
 
   const dayPopUp = (info: EventClickArg) => {
     //console.log(info.event.title);
     if (delAttempt) {
       setDeletePopup(true);
-    }
-    else {
+    } else {
       setModal(true);
     }
     setSelectedEvent(convertToEventProp(info));
@@ -109,37 +115,38 @@ export default function Calendar() {
   const toggleAddEvent = () => {
     setAddPopup(false);
     setChangeCal(true);
-  }
+  };
 
   const toggleRemoveEvent = () => {
     setModal(false);
     setAddPopup(false);
     setDeletePopup(false);
     setDelAttempt(false);
-  }
+  };
 
   const toggleDeleteEvent = () => {
     setDeletePopup(false);
     setDelAttempt(false);
     setChangeCal(true);
-  }
+  };
 
   const addPopUp = () => {
     setAddPopup(true);
-  }
+  };
+
 
   // Function to delete event:
   const removeSelectedEvent = async (toDel: EventClickArg) => {
-    const response = await fetch('/api/delete', {
-      method: 'POST',
+    const response = await fetch("/api/delete", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ title: toDel.event.title })
+      body: JSON.stringify({ title: toDel.event.title }),
     });
     // Check if the response was successful
     if (!response.ok) {
-      console.error('Failed to delete event:', await response.text());
+      console.error("Failed to delete event:", await response.text());
       return;
     }
 
@@ -158,6 +165,7 @@ export default function Calendar() {
     <div>
       <Button onClick={addPopUp}>Add Event</Button>
       <Button onClick={handleDelReq}>{buttonText}</Button>
+      <Button onClick={openSyncPopUp}>Sync Event</Button>
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         initialView={"dayGridMonth"}
@@ -191,14 +199,19 @@ export default function Calendar() {
       <AddEventPopUp
         togglePopup={addPopup}
         toggleAddEvent={toggleAddEvent}
-        toggleRemoveEvent={toggleRemoveEvent}>
-      </AddEventPopUp>
+        toggleRemoveEvent={toggleRemoveEvent}
+      ></AddEventPopUp>
       <DeleteEventPopUp
         event={selectedEvent}
         togglePopup={deletePopup}
         toggleDeleteEvent={toggleDeleteEvent}
-        toggleRemoveEvent={toggleRemoveEvent}>
-      </DeleteEventPopUp>
+        toggleRemoveEvent={toggleRemoveEvent}
+      ></DeleteEventPopUp>
+      <SyncPopUp
+        popUpStat={syncPopUpDisp}
+        togglePopUpStat={toggleSyncDisp}
+        onclose={syncOnClose}
+      ></SyncPopUp>
     </div>
-  );  
+  );
 }
