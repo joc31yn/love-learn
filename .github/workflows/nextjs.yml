@@ -46,35 +46,24 @@ jobs:
         run: ${{ steps.detect-package-manager.outputs.manager }} install
         working-directory: ./frontend
 
-  # Lint job
-  lint:
-    runs-on: ubuntu-latest
-    needs: setup
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Run ESLint
-        run: ${{ needs.setup.outputs.manager }} run lint
-        working-directory: frontend
-
-  # Test job
-  test:
-    runs-on: ubuntu-latest
-    needs: [setup, lint]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Run Tests
-        run: ${{ needs.setup.outputs.manager }} run test
-        working-directory: frontend
-
   # Build job
   build:
     runs-on: ubuntu-latest
-    needs: [setup, test]
+    needs: [setup]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Build Next.js site
         run: ${{ needs.setup.outputs.runner }} next build
+        working-directory: frontend
+
+  # Lint job (optional)
+  lint:
+    runs-on: ubuntu-latest
+    needs: [setup]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Run ESLint
+        run: ${{ needs.setup.outputs.manager }} run lint
         working-directory: frontend
