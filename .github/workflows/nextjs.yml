@@ -36,6 +36,7 @@ jobs:
             echo "Unable to determine package manager"
             exit 1
           fi
+        working-directory: ./frontend
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -55,7 +56,7 @@ jobs:
     steps:
       - name: Run ESLint
         run: ${{ needs.setup.outputs.manager }} run lint
-        working-directory: /frontend
+        working-directory: ./frontend
 
   # Test job
   test:
@@ -64,7 +65,7 @@ jobs:
     steps:
       - name: Run Tests
         run: ${{ needs.setup.outputs.manager }} run test
-        working-directory: /frontend
+        working-directory: ./frontend
 
   # Build job
   build:
@@ -73,4 +74,4 @@ jobs:
     steps:
       - name: Build Next.js site
         run: ${{ needs.setup.outputs.runner }} next build
-        working-directory: /frontend
+        working-directory: ./frontend
