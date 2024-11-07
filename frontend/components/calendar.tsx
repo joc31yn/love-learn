@@ -76,7 +76,7 @@ export default function Calendar() {
 
   useEffect(() => {
     // This effect runs whenever delAttempt changes
-    console.log(delAttempt);
+    //console.log(delAttempt);
     if (delAttempt) {
       setButtonText("Cancel Deletion");
     } 
