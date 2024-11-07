@@ -36,6 +36,7 @@ export default function Calendar() {
   const [modal, setModal] = useState(false);
   const [addPopup, setAddPopup] = useState(false);
   const [deletePopup, setDeletePopup] = useState(false);
+  const [buttonText, setButtonText] = useState("Delete Event");
   const prevChangeCal = useRef(changeCal);
   // State for eventProp
   const [selectedEvent, setSelectedEvent] = useState(emptyEventData);
@@ -73,6 +74,17 @@ export default function Calendar() {
     prevChangeCal.current = changeCal;
   }, [changeCal]); 
 
+  useEffect(() => {
+    // This effect runs whenever delAttempt changes
+    console.log(delAttempt);
+    if (delAttempt) {
+      setButtonText("Cancel Deletion");
+    } 
+    else {
+      setButtonText("Delete Event");
+    }
+  }, [delAttempt]);
+
   const toggleModal = () => setModal(!modal);
 
   const convertToEventProp = (info: EventClickArg): EventProp => ({
@@ -84,7 +96,7 @@ export default function Calendar() {
   });
 
   const dayPopUp = (info: EventClickArg) => {
-    console.log(info.event.title);
+    //console.log(info.event.title);
     if (delAttempt) {
       setDeletePopup(true);
     }
@@ -103,10 +115,12 @@ export default function Calendar() {
     setModal(false);
     setAddPopup(false);
     setDeletePopup(false);
+    setDelAttempt(false);
   }
 
   const toggleDeleteEvent = () => {
     setDeletePopup(false);
+    setDelAttempt(false);
     setChangeCal(true);
   }
 
@@ -135,27 +149,15 @@ export default function Calendar() {
 
   //Handles the text and delete status in the button for deleting events
   //##################################
-  const delButton = () => {
-    if (delAttempt) {
-      return "Cancel Deletion";
-    } else {
-      return "Delete Event";
-    }
-  };
   const handleDelReq = () => {
-    if (delAttempt) {
-      setDelAttempt(false);
-    } 
-    else {
-      setDelAttempt(true);
-    }
+    setDelAttempt((prev) => !prev);
   };
   //##################################
 
   return (
     <div>
       <Button onClick={addPopUp}>Add Event</Button>
-      <Button onClick={handleDelReq}>{delButton()}</Button>
+      <Button onClick={handleDelReq}>{buttonText}</Button>
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         initialView={"dayGridMonth"}
