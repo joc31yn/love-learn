@@ -1,0 +1,73 @@
+# Workflow to build, lint, and test in /frontend
+name: build, lint, and test frontend
+
+on:
+  push:
+    paths:
+      - "frontend/**"  # Only trigger on changes in the frontend directory
+  pull_request:
+    paths:
+      - "frontend/**"  # Only trigger on changes in the frontend directory
+  workflow_dispatch:
+
+jobs:
+  # Reusable setup job for installing dependencies and detecting package manager
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      manager: ${{ steps.detect-package-manager.outputs.manager }}
+      runner: ${{ steps.detect-package-manager.outputs.runner }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Detect package manager
+        id: detect-package-manager
+        run: |
+          if [ -f "${{ github.workspace }}/frontend/yarn.lock" ]; then
+            echo "manager=yarn" >> $GITHUB_OUTPUT
+            echo "runner=yarn" >> $GITHUB_OUTPUT
+          elif [ -f "${{ github.workspace }}/frontend/package.json" ]; then
+            echo "manager=npm" >> $GITHUB_OUTPUT
+            echo "runner=npx --no-install" >> $GITHUB_OUTPUT
+          else
+            echo "Unable to determine package manager"
+            exit 1
+          fi
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: ${{ steps.detect-package-manager.outputs.manager }}
+
+      - name: Install dependencies
+        run: ${{ steps.detect-package-manager.outputs.manager }} install
+        working-directory: ./frontend  # Restrict to frontend directory
+
+  # Lint job
+  lint:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - name: Run ESLint
+        run: ${{ needs.setup.outputs.manager }} run lint
+        working-directory: ./frontend
+
+  # Test job
+  test:
+    runs-on: ubuntu-latest
+    needs: [setup, lint]
+    steps:
+      - name: Run Tests
+        run: ${{ needs.setup.outputs.manager }} run test
+        working-directory: ./frontend
+
+  # Build job
+  build:
+    runs-on: ubuntu-latest
+    needs: [setup, test]
+    steps:
+      - name: Build Next.js site
+        run: ${{ needs.setup.outputs.runner }} next build
+        working-directory: ./frontend
