@@ -41,7 +41,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-
+          
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} install
         working-directory: ./frontend
@@ -53,7 +53,7 @@ jobs:
     steps:
       - name: Run ESLint
         run: ${{ needs.setup.outputs.manager }} run lint
-        working-directory: ./frontend
+        working-directory: /frontend
 
   # Test job
   test:
@@ -62,7 +62,7 @@ jobs:
     steps:
       - name: Run Tests
         run: ${{ needs.setup.outputs.manager }} run test
-        working-directory: ./frontend
+        working-directory: /frontend
 
   # Build job
   build:
@@ -71,4 +71,4 @@ jobs:
     steps:
       - name: Build Next.js site
         run: ${{ needs.setup.outputs.runner }} next build
-        working-directory: ./frontend
+        working-directory: /frontend
