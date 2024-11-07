@@ -3,11 +3,9 @@ name: build, lint, and test frontend
 
 on:
   push:
-    branches: ["main"]
     paths:
       - "frontend/**"  # Only trigger on changes in the frontend directory
   pull_request:
-    branches: ["main"]
     paths:
       - "frontend/**"  # Only trigger on changes in the frontend directory
   workflow_dispatch:
