@@ -1,5 +1,5 @@
 export interface EventProp {
-    name: string;
+    title: string;
     start_date: string;
     end_date: string;
     location: string;

@@ -9,10 +9,12 @@ interface EventPopUpProps {
 }
 
 const EventPopUp: React.FC<EventPopUpProps> = ({ modal, toggleModal }) => {
-    if (modal) {
-        document.body.classList.add('active-modal');
-    } else {
-        document.body.classList.remove('active-modal');
+    if (typeof window !== "undefined") {
+        if (modal) {
+            document.body.classList.add('active-modal');
+        } else {
+            document.body.classList.remove('active-modal');
+        }
     }
     return (
         <>

@@ -7,18 +7,17 @@ import { EventProp } from '@/utils/types';
 export async function GET() {
   // Get the authenticated user
   const supabase = await createClient();
-
+  console.log(supabase);
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
   let result, fetchError;
   if (user) {
     // Fetch events from user_events if the user is authenticated
     const { data, error } = await supabase
       .from('user_events')
-      .select('title, description, event_date, location')
-      .eq('id', user.id);
+      .select('title, start_date, end_date, description, location')
+      .eq('user_id', user.id);
     result = data;
     fetchError = error;
   } 
@@ -31,13 +30,14 @@ export async function GET() {
     fetchError = error;
   }
 
+  console.log("ERROR", fetchError);
   if (fetchError) {
     console.error('Error fetching events:', fetchError.message);
     return NextResponse.json({ events: [] }, { status: 500 });
   }
 
   const events: EventProp[] = (result || []).map((event: any) => ({
-    name: event.title,
+    title: event.title,
     start_date: event.start_date,
     end_date: event.end_date,
     location: event.location,
