@@ -7,7 +7,6 @@ import { EventProp } from '@/utils/types';
 export async function GET() {
   // Get the authenticated user
   const supabase = await createClient();
-  console.log(supabase);
   const {
     data: { user },
   } = await supabase.auth.getUser();

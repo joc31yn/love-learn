@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 //import './EventPopUp.css';
-import { EventProp } from '@/utils/types';
+import { EventProp, emptyEventData } from '@/utils/types';
 // import { createClient } from "@/utils/supabase/server";
 
 interface AddEventPopUpProps {
@@ -33,31 +33,12 @@ async function addEvent(eventProp: EventProp) {
 }
 
 const AddEventPopUp: React.FC<AddEventPopUpProps> = ({ togglePopup, toggleAddEvent, toggleRemoveEvent }) => {
-    
-    const emptyEventData = {
-        title: '',
-        start_date: '',
-        end_date: '',
-        location: '',
-        description: ''
-    };
 
     const [eventData, setEventData] = useState(emptyEventData);
 
     const resetEventData = () => {
         setEventData(emptyEventData);
     };
-
-    useEffect(() => {
-        // Add or remove the modal class based on the togglePopup state
-        if (typeof window !== "undefined") {
-            if (togglePopup) {
-                document.body.classList.add('active-modal');
-            } else {
-                document.body.classList.remove('active-modal');
-            }
-        }
-    }, [togglePopup]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -77,10 +58,18 @@ const AddEventPopUp: React.FC<AddEventPopUpProps> = ({ togglePopup, toggleAddEve
         toggleAddEvent(); // Optionally close the popup after adding
     };
 
-    const handleRemoveEvent = async () => {
+    const handleRemoveEvent = () => {
         resetEventData(); // Remove any saved values
         toggleRemoveEvent(); // Optionally close the popup after closing
     };
+
+    if (typeof window !== "undefined") {
+        if (togglePopup) {
+            document.body.classList.add('active-modal');
+        } else {
+            document.body.classList.remove('active-modal');
+        }
+    }
 
     return (
         <>

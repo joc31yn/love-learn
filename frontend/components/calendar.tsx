@@ -5,11 +5,12 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import { EventProp } from '@/utils/types';
+import { emptyEventData, EventProp } from '@/utils/types';
 import AddEventPopUp from '@/components/popup/AddEventPopUp';
 import EventPopUp from "@/components/popup/EventPopUp";
 import { Button } from "@/components/ui/button";
 import { EventClickArg } from "@fullcalendar/core";
+import DeleteEventPopUp from "@/components/popup/DeleteEventPopUp";
 
 async function fetchEvents(): Promise<EventProp[]> {
   const res = await fetch('/api/events', {
@@ -25,19 +26,24 @@ async function fetchEvents(): Promise<EventProp[]> {
   return data.events;
 }
 
+// Data race: If a user is in one popup, another popup cannot be opened
+
 export default function Calendar() {
   const [calendarEvents, setCalendarEvents] = useState([]);
-  //Hook for delete events:
+  // States for delete events:
   const [delAttempt, setDelAttempt] = useState(false);
-  const [confirmDel, setConfirmDel] = useState(false);
   const [changeCal, setChangeCal] = useState(false);
-
+  const [modal, setModal] = useState(false);
+  const [addPopup, setAddPopup] = useState(false);
+  const [deletePopup, setDeletePopup] = useState(false);
   const prevChangeCal = useRef(changeCal);
+  // State for eventProp
+  const [selectedEvent, setSelectedEvent] = useState(emptyEventData);
 
   const fetchData = async () => {
     try {
       const eventsInProps = await fetchEvents();
-      console.log(eventsInProps);
+      //console.log(eventsInProps);
       // Check if eventsInProps is an array to prevent errors
       const formattedEvents = (eventsInProps || []).map((event: EventProp) => ({
         title: event.title,
@@ -67,34 +73,49 @@ export default function Calendar() {
     prevChangeCal.current = changeCal;
   }, [changeCal]); 
 
-  const [modal, setModal] = useState(false);
-  const [togglePopup, settogglePopup] = useState(false);
   const toggleModal = () => setModal(!modal);
-  const toggleAddEvent = () => {
-    settogglePopup(false);
-    setChangeCal(true);
-  }
-  const toggleRemoveEvent = () => {
-    settogglePopup(false);
-  }
-  const addPopUp = () => {
-    settogglePopup(true);
-  }
 
-  // MODIFIED: if the user is attempting to delete, the event will be deleted on click
+  const convertToEventProp = (info: EventClickArg): EventProp => ({
+    title: info.event.title,
+    start_date: info.event.start ? info.event.start.toISOString() : '',
+    end_date: info.event.end ? info.event.end.toISOString() : '',
+    location: info.event.extendedProps.location || '',
+    description: info.event.extendedProps.description || '',
+  });
+
   const dayPopUp = (info: EventClickArg) => {
+    console.log(info.event.title);
     if (delAttempt) {
-      removeSelectedEvent(info);
-      handleDelReq();
-    } else {
+      setDeletePopup(true);
+    }
+    else {
       setModal(true);
     }
-    
+    setSelectedEvent(convertToEventProp(info));
   };
+
+  const toggleAddEvent = () => {
+    setAddPopup(false);
+    setChangeCal(true);
+  }
+
+  const toggleRemoveEvent = () => {
+    setModal(false);
+    setAddPopup(false);
+    setDeletePopup(false);
+  }
+
+  const toggleDeleteEvent = () => {
+    setDeletePopup(false);
+    setChangeCal(true);
+  }
+
+  const addPopUp = () => {
+    setAddPopup(true);
+  }
 
   // Function to delete event:
   const removeSelectedEvent = async (toDel: EventClickArg) => {
-    console.log(toDel.event.title);
     const response = await fetch('/api/delete', {
       method: 'POST',
       headers: {
@@ -102,7 +123,6 @@ export default function Calendar() {
       },
       body: JSON.stringify({ title: toDel.event.title })
     });
-    console.log("done");
     // Check if the response was successful
     if (!response.ok) {
       console.error('Failed to delete event:', await response.text());
@@ -125,7 +145,8 @@ export default function Calendar() {
   const handleDelReq = () => {
     if (delAttempt) {
       setDelAttempt(false);
-    } else {
+    } 
+    else {
       setDelAttempt(true);
     }
   };
@@ -166,10 +187,16 @@ export default function Calendar() {
       />
       <EventPopUp modal={modal} toggleModal={toggleModal} />
       <AddEventPopUp
-        togglePopup={togglePopup}
+        togglePopup={addPopup}
         toggleAddEvent={toggleAddEvent}
         toggleRemoveEvent={toggleRemoveEvent}>
       </AddEventPopUp>
+      <DeleteEventPopUp
+        event={selectedEvent}
+        togglePopup={deletePopup}
+        toggleDeleteEvent={toggleDeleteEvent}
+        toggleRemoveEvent={toggleRemoveEvent}>
+      </DeleteEventPopUp>
     </div>
   );  
 }
