@@ -129,25 +129,6 @@ export default function Calendar() {
     setAddPopup(true);
   }
 
-  // Function to delete event:
-  const removeSelectedEvent = async (toDel: EventClickArg) => {
-    const response = await fetch('/api/delete', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ title: toDel.event.title })
-    });
-    // Check if the response was successful
-    if (!response.ok) {
-      console.error('Failed to delete event:', await response.text());
-      return;
-    }
-
-    // Update calendar rendering
-    setChangeCal(true);
-  };
-
   //Handles the text and delete status in the button for deleting events
   //##################################
   const handleDelReq = () => {
