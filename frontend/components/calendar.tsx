@@ -11,6 +11,7 @@ import EventPopUp from "@/components/popup/EventPopUp";
 import { Button } from "@/components/ui/button";
 import { EventClickArg } from "@fullcalendar/core";
 import DeleteEventPopUp from "@/components/popup/DeleteEventPopUp";
+import { CalendarEvent } from "@/utils/types";
 
 async function fetchEvents(): Promise<EventProp[]> {
   const res = await fetch('/api/events', {
@@ -29,7 +30,7 @@ async function fetchEvents(): Promise<EventProp[]> {
 // Data race: If a user is in one popup, another popup cannot be opened
 
 export default function Calendar() {
-  const [calendarEvents, setCalendarEvents] = useState([]);
+  const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
   // States for delete events:
   const [delAttempt, setDelAttempt] = useState(false);
   const [changeCal, setChangeCal] = useState(false);
@@ -46,7 +47,7 @@ export default function Calendar() {
       const eventsInProps = await fetchEvents();
       //console.log(eventsInProps);
       // Check if eventsInProps is an array to prevent errors
-      const formattedEvents = (eventsInProps || []).map((event: EventProp) => ({
+      const formattedEvents: CalendarEvent[] = (eventsInProps || []).map((event: EventProp) => ({
         title: event.title,
         start: event.start_date,
         end: event.end_date,
