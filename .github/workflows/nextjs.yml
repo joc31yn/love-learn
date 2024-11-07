@@ -39,19 +39,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-<<<<<<< Updated upstream
-
-      - name: Cache dependencies
-        uses: actions/cache@v4
-        with:
-          path: ./frontend/node_modules
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('frontend/package-lock.json', 'frontend/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-nextjs-
-=======
           cache: ${{ steps.detect-package-manager.outputs.manager }}
           working-directory: ./frontend
->>>>>>> Stashed changes
 
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} install
