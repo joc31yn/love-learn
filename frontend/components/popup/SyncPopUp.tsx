@@ -88,7 +88,7 @@ const SyncPopUp: React.FC<SyncPopUpProps> = ({
                 </button>
 
                 {displayLearnTF && (
-                  <div>
+                  <div className="flex flex-col items-center space-y-4">
                     <Label>DEVPOST LINK:</Label>
                     <Input
                       type="text"
@@ -98,14 +98,18 @@ const SyncPopUp: React.FC<SyncPopUpProps> = ({
                       onChange={(e) => setLearnLink(e.target.value)}
                     />
                     <button
-                      onClick={() => { syncEvent("learn", learnLink), setLearnLink(""), setDisplayLearnTF(false) }}
+                      onClick={() => {
+                        syncEvent("learn", learnLink),
+                          setLearnLink(""),
+                          setDisplayLearnTF(false);
+                      }}
                       className="mx-auto bg-white text-black border border-black px-4 py-2 rounded hover:bg-yellow-100 active:bg-gray-200"
                     >
                       CONFIRM AND SEND
                     </button>
                   </div>
-                              )}
-                              
+                )}
+
                 <button
                   onClick={() => setDisplayICTF(true)} // Close the modal
                   className="mx-auto bg-white text-black border border-black px-4 py-2 rounded hover:bg-yellow-100 active:bg-gray-200"
@@ -114,7 +118,7 @@ const SyncPopUp: React.FC<SyncPopUpProps> = ({
                 </button>
 
                 {displayICTF && (
-                  <div>
+                  <div className="flex flex-col items-center space-y-4">
                     <Label>ICAL LINK:</Label>
                     <Input
                       type="text"
@@ -124,7 +128,11 @@ const SyncPopUp: React.FC<SyncPopUpProps> = ({
                       onChange={(e) => setICLink(e.target.value)}
                     />
                     <button
-                      onClick={() => { syncEvent("ical", ICLink), setICLink(""), setDisplayICTF(false) }}
+                      onClick={() => {
+                        syncEvent("ical", ICLink),
+                          setICLink(""),
+                          setDisplayICTF(false);
+                      }}
                       className="mx-auto bg-white text-black border border-black px-4 py-2 rounded hover:bg-yellow-100 active:bg-gray-200"
                     >
                       CONFIRM AND SEND
@@ -133,7 +141,6 @@ const SyncPopUp: React.FC<SyncPopUpProps> = ({
                 )}
               </div>
 
-              
               <br />
               <Button onClick={handleOnClose}>CLOSE</Button>
             </div>

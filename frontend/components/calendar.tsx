@@ -134,7 +134,6 @@ export default function Calendar() {
     setAddPopup(true);
   };
 
-
   // Function to delete event:
   const removeSelectedEvent = async (toDel: EventClickArg) => {
     const response = await fetch("/api/delete", {

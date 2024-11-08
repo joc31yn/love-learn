@@ -13,3 +13,23 @@ export const emptyEventData = {
   location: '',
   description: ''
 };
+
+export interface CalendarEvent {
+  title: string;
+  start: string;
+  end: string;
+  extendedProps: {
+    location: string;
+    description: string;
+  };
+};
+
+export const emptyCalendarEvent = {
+  title: '',
+  start: '',
+  end: '',
+  extendedProps: {
+    location: '',
+    description: ''
+  }
+};
