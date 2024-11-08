@@ -3,15 +3,16 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { EventProp } from '@/utils/types';
+import { PostgrestError } from '@supabase/supabase-js';
 
 export async function GET() {
   // Get the authenticated user
   const supabase = await createClient();
-  console.log(supabase);
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  let result, fetchError;
+  let result: EventProp[] | null = null;
+  let fetchError: PostgrestError | null = null;
   if (user) {
     // Fetch events from user_events if the user is authenticated
     const { data, error } = await supabase
@@ -26,23 +27,15 @@ export async function GET() {
     const { data, error } = await supabase
       .from('public_events')
       .select('title, start_date, end_date, description, location');
-    result = data;
-    fetchError = error;
+      result = data;
+      fetchError = error;
   }
-
-  console.log("ERROR", fetchError);
   if (fetchError) {
     console.error('Error fetching events:', fetchError.message);
     return NextResponse.json({ events: [] }, { status: 500 });
   }
-
-  const events: EventProp[] = (result || []).map((event: any) => ({
-    title: event.title,
-    start_date: event.start_date,
-    end_date: event.end_date,
-    location: event.location,
-    description: event.description,
-  }));
+  // Infer the type of `result` automatically
+  const events: EventProp[] = result ?? [];
 
   return NextResponse.json({ events });
 }

@@ -1,3 +1,5 @@
+Linter tests must pass before your PR is merged. 
+
 Run frontend: 
 
 ```
