@@ -84,9 +84,6 @@ class LearnScraper(AbstractDataSource):
         march_bound = datetime.datetime(datetime.datetime.now().year, 3, 1)
         march_bound = timezone.localize(march_bound + datetime.timedelta(days=(6-march_bound.weekday() + 7)))
 
-        print(type(time))
-        print(time)
-        print(type(march_bound))
         if time >= march_bound and time < nov_bound:
             return time + datetime.timedelta(hours=-4)
 
@@ -109,7 +106,6 @@ class LearnScraper(AbstractDataSource):
             if event.get("DTSTART") is None:
                 data["start_date"] = ""
             else:
-                print("EMMA", event.get("DTSTART").dt)
                 data["start_date"] = (self.time_zone_shift(event.get("DTSTART").dt)).strftime("%Y-%m-%d %H:%M")
             
             if event.get("DTEND") is None:
@@ -222,7 +218,3 @@ class InstagramScraper(AbstractDataSource):
         if (ev["start_date"] == "" or ev["end_date"] == ""):
             return None
         return event
-
-
-if __name__ == '__main__':
-    print(LearnScraper("https://learn.uwaterloo.ca/d2l/le/calendar/feed/user/feed.ics?feedOU=1051763&token=a24z4c5slufphp3s3df84").get_events())

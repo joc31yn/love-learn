@@ -4,7 +4,7 @@ VERSION:2.0
 METHOD:PUBLISH
 X-WR-CALNAME:CHEM 120 - Fall 2024
 BEGIN:VEVENT
-DTSTAMP:20241108T033507Z
+DTSTAMP:20241109T005418Z
 SUMMARY:Assignment 1 (Getting Started) F24 - Due
 DESCRIPTION:<p>Assignment 1:&nbsp\; Getting Started.&nbsp\; &nbsp\;This ass
 	ignment is based on content from the course outline and simple questions to
@@ -23,7 +23,7 @@ SEQUENCE:1
 LAST-MODIFIED:20240831T135630Z
 END:VEVENT
 BEGIN:VEVENT
-DTSTAMP:20241108T033507Z
+DTSTAMP:20241109T005418Z
 SUMMARY:Participation Challenge 1 F24 - Due
 DESCRIPTION:<p>&nbsp\;(<strong>Do not open this until you are ready to comp
 	lete it in one attempt!</strong>)&nbsp\; This is a&nbsp\;<strong><span styl
@@ -46,7 +46,7 @@ SEQUENCE:2
 LAST-MODIFIED:20240911T034641Z
 END:VEVENT
 BEGIN:VEVENT
-DTSTAMP:20241108T033507Z
+DTSTAMP:20241109T005418Z
 SUMMARY:Assignment 2 (Module 1 Part 1) F24 - Due
 DESCRIPTION:<p>Assignment 2:&nbsp\; Module 1 Part 1.&nbsp\; This assignment
 	 is based on content from Module 1 (approx. Pages 1 to 19).&nbsp\; You have
@@ -65,7 +65,7 @@ SEQUENCE:1
 LAST-MODIFIED:20240831T135703Z
 END:VEVENT
 BEGIN:VEVENT
-DTSTAMP:20241108T033507Z
+DTSTAMP:20241109T005418Z
 SUMMARY:Participation Challenge 2 F24 - Due
 DESCRIPTION:<p><span style="color: rgb(214\, 0\, 0)\;"><span style="color: 
 	rgb(32\, 33\, 34)\;">Participation<strong> </strong>Challenge 2</span>. Do&
@@ -88,7 +88,7 @@ SEQUENCE:2
 LAST-MODIFIED:20240917T153038Z
 END:VEVENT
 BEGIN:VEVENT
-DTSTAMP:20241108T033507Z
+DTSTAMP:20241109T005418Z
 SUMMARY:Assignment 3 (Module 1 Part 2) F24 - Due
 DESCRIPTION:<p>Assignment 3:&nbsp\; Module 1 Part 2.&nbsp\; This assignment
 	 is based on content from Module 1 (approx. Pages 19-31).&nbsp\; You have t
@@ -107,7 +107,7 @@ SEQUENCE:0
 LAST-MODIFIED:20240928T232552Z
 END:VEVENT
 BEGIN:VEVENT
-DTSTAMP:20241108T033507Z
+DTSTAMP:20241109T005418Z
 SUMMARY:Assignment 4 (Module 2 Part 1) F24 - Due
 DESCRIPTION:<p>Assignment 4:&nbsp\; Module 2 Part 1.&nbsp\; This assignment
 	 is based on content from Module 2 (approx. pages 1 to 14).&nbsp\; You have
@@ -125,7 +125,7 @@ SEQUENCE:1
 LAST-MODIFIED:20240926T195025Z
 END:VEVENT
 BEGIN:VEVENT
-DTSTAMP:20241108T033507Z
+DTSTAMP:20241109T005418Z
 SUMMARY:Assignment 5 (Module 2 Part 2) F24 - Due
 DESCRIPTION:<p>Assignment 5:&nbsp\; Module 2 Part 2.&nbsp\; &nbsp\;This ass
 	ignment is based on Module 2 (approx. pages 15-34)&nbsp\; You have 3 attemp
@@ -145,7 +145,7 @@ SEQUENCE:1
 LAST-MODIFIED:20240926T195024Z
 END:VEVENT
 BEGIN:VEVENT
-DTSTAMP:20241108T033507Z
+DTSTAMP:20241109T005418Z
 SUMMARY:Participation Challenge 3 F24 - Due
 DESCRIPTION:<p>Important Note:&nbsp\; &nbsp\;PC3 deadline has been extended
 	 to Friday\, October 11th.&nbsp\; &nbsp\;You will need the content in Monda
@@ -169,7 +169,7 @@ SEQUENCE:2
 LAST-MODIFIED:20241005T012331Z
 END:VEVENT
 BEGIN:VEVENT
-DTSTAMP:20241108T033507Z
+DTSTAMP:20241109T005418Z
 SUMMARY:Participation Challenge 4 F24 - Due
 DESCRIPTION:<p>Participation Challenge 4. &nbsp\; &nbsp\;<span style="color
 	: rgb(214\, 0\, 0)\;">Do <strong>not open this until you are ready to compl
@@ -191,7 +191,7 @@ SEQUENCE:0
 LAST-MODIFIED:20241009T180617Z
 END:VEVENT
 BEGIN:VEVENT
-DTSTAMP:20241108T033507Z
+DTSTAMP:20241109T005418Z
 SUMMARY:Assignment 6 (Module 3) F24 - Due
 DESCRIPTION:<p>Assignment 6:&nbsp\; Module 3. This assignment is based on c
 	ontent from Module 3.&nbsp\; You have three attempts to complete the assign
@@ -208,7 +208,7 @@ SEQUENCE:0
 LAST-MODIFIED:20241009T174004Z
 END:VEVENT
 BEGIN:VEVENT
-DTSTAMP:20241108T033507Z
+DTSTAMP:20241109T005418Z
 SUMMARY:Participation Challenge 5 F24 - Due
 DESCRIPTION:<p>Participation Challenge 5<strong>.&nbsp\; <span style="color
 	: rgb(207\, 42\, 39)\;">Do not open this until you can complete it in one a
@@ -231,7 +231,7 @@ SEQUENCE:3
 LAST-MODIFIED:20241016T192459Z
 END:VEVENT
 BEGIN:VEVENT
-DTSTAMP:20241108T033507Z
+DTSTAMP:20241109T005418Z
 SUMMARY:Assignment 7 (Module 4 Part 1) F24 - Due
 DESCRIPTION:<p>Assignment 7:&nbsp\; Module 4 Part 1.&nbsp\; This assignment
 	 is based on content from Module 4 (approx. Pages 1-10).&nbsp\; You have 3 
@@ -248,7 +248,7 @@ SEQUENCE:1
 LAST-MODIFIED:20241016T191206Z
 END:VEVENT
 BEGIN:VEVENT
-DTSTAMP:20241108T033507Z
+DTSTAMP:20241109T005418Z
 SUMMARY:Assignment 8 (Module 4 Part 2) F24 - Due
 DESCRIPTION:<p>Assignment 8:&nbsp\; Module 4 Part 2.&nbsp\; &nbsp\;This ass
 	ignment is based on Module 4 (All)&nbsp\; You have 3 attempts to complete t
@@ -265,7 +265,7 @@ SEQUENCE:1
 LAST-MODIFIED:20241016T191211Z
 END:VEVENT
 BEGIN:VEVENT
-DTSTAMP:20241108T033507Z
+DTSTAMP:20241109T005418Z
 SUMMARY:Participation Challenge 6 F24 - Due
 DESCRIPTION:<p><span style="font-size: 17px\;"><span style="color: rgb(214\
 	, 0\, 0)\;"><strong><span style="color: rgb(32\, 33\, 34)\;">Participation 
@@ -290,7 +290,7 @@ SEQUENCE:3
 LAST-MODIFIED:20241029T170845Z
 END:VEVENT
 BEGIN:VEVENT
-DTSTAMP:20241108T033507Z
+DTSTAMP:20241109T005418Z
 SUMMARY:Assignment 9 (Module 5) F24 - Due
 DESCRIPTION:<p>Assignment 9:&nbsp\; Module 5 (All) &nbsp\;This assignment i
 	s based on content from Module 5 (All).&nbsp\; You have 3 attempts to compl
@@ -307,7 +307,7 @@ SEQUENCE:1
 LAST-MODIFIED:20241029T170838Z
 END:VEVENT
 BEGIN:VEVENT
-DTSTAMP:20241108T033507Z
+DTSTAMP:20241109T005418Z
 SUMMARY:Participation Challenge 7 F24 - Due
 DESCRIPTION:<p><span style="font-size: 17px\;"><span style="color: rgb(214\
 	, 0\, 0)\;"><strong><span style="color: rgb(32\, 33\, 34)\;">Participation 
