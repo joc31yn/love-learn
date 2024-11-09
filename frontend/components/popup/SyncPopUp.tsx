@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 
-
 interface SyncPopUpProps {
   popUpStat: boolean;
   togglePopUpStat: () => void;
@@ -30,12 +29,10 @@ const SyncPopUp: React.FC<SyncPopUpProps> = ({
   //     location: "",
   //     description: "",
   //   };
-    const [displayLearnTF, setDisplayLearnTF] = useState(Boolean);
-    const [learnLink, setLearnLink] = useState(String);
-    const [displayICTF, setDisplayICTF] = useState(Boolean);
-    const [ICLink, setICLink] = useState(String);
-
-    
+  const [displayLearnTF, setDisplayLearnTF] = useState(Boolean);
+  const [learnLink, setLearnLink] = useState(String);
+  const [displayICTF, setDisplayICTF] = useState(Boolean);
+  const [ICLink, setICLink] = useState(String);
 
   useEffect(() => {
     // Add or remove the modal class based on the togglePopup state
@@ -48,14 +45,12 @@ const SyncPopUp: React.FC<SyncPopUpProps> = ({
     }
   }, [popUpStat]);
 
-
   const handleOnClose = async () => {
     setDisplayLearnTF(false);
     setDisplayICTF(false);
-    onclose()
+    onclose();
     togglePopUpStat();
     // https://supabase.com/docs/reference/javascript/auth-getsession
-    
   };
 
   return (
@@ -63,33 +58,30 @@ const SyncPopUp: React.FC<SyncPopUpProps> = ({
       {popUpStat && (
         <div className="modal">
           <div className="overlay">
-            <div className="event-content">
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 leading-7 bg-gray-100 p-6 rounded w-1/2">
               <h1 className="text-2xl font-bold text-center text-gray-800 mb-4">
                 Sync Options
               </h1>
               <div className="flex flex-col items-center space-y-4">
-                <button
+                <Button
                   onClick={() => syncEvent("instagram", "")} // Close the modal
-                  className="mx-auto bg-white text-black border border-black px-4 py-2 rounded hover:bg-yellow-100 active:bg-gray-200"
                 >
                   SYNC INSTAGRAM
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={() => syncEvent("devpost", "")} // Close the modal
-                  className="mx-auto bg-white text-black border border-black px-4 py-2 rounded hover:bg-yellow-100 active:bg-gray-200"
                 >
                   SYNC DEVPOST
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={() => setDisplayLearnTF(true)} // Close the modal
-                  className="mx-auto bg-white text-black border border-black px-4 py-2 rounded hover:bg-yellow-100 active:bg-gray-200"
                 >
                   SYNC LEARN
-                </button>
+                </Button>
 
                 {displayLearnTF && (
                   <div className="flex flex-col items-center space-y-4">
-                    <Label>DEVPOST LINK:</Label>
+                    <Label>LEARN LINK:</Label>
                     <Input
                       type="text"
                       name="learn"
@@ -97,52 +89,54 @@ const SyncPopUp: React.FC<SyncPopUpProps> = ({
                       value={learnLink}
                       onChange={(e) => setLearnLink(e.target.value)}
                     />
-                    <button
+                    <Button
                       onClick={() => {
                         syncEvent("learn", learnLink),
                           setLearnLink(""),
                           setDisplayLearnTF(false);
                       }}
-                      className="mx-auto bg-white text-black border border-black px-4 py-2 rounded hover:bg-yellow-100 active:bg-gray-200"
                     >
                       CONFIRM AND SEND
-                    </button>
+                    </Button>
                   </div>
                 )}
 
-                <button
+                <Button
                   onClick={() => setDisplayICTF(true)} // Close the modal
-                  className="mx-auto bg-white text-black border border-black px-4 py-2 rounded hover:bg-yellow-100 active:bg-gray-200"
                 >
                   SYNC ICAL
-                </button>
+                </Button>
 
                 {displayICTF && (
                   <div className="flex flex-col items-center space-y-4">
                     <Label>ICAL LINK:</Label>
                     <Input
+                      className="w-30"
                       type="text"
                       name="ical"
                       placeholder="enter link here"
                       value={ICLink}
                       onChange={(e) => setICLink(e.target.value)}
                     />
-                    <button
+                    <Button
                       onClick={() => {
                         syncEvent("ical", ICLink),
                           setICLink(""),
                           setDisplayICTF(false);
                       }}
-                      className="mx-auto bg-white text-black border border-black px-4 py-2 rounded hover:bg-yellow-100 active:bg-gray-200"
                     >
                       CONFIRM AND SEND
-                    </button>
+                    </Button>
                   </div>
                 )}
+                <br />
+                <button
+                  onClick={handleOnClose}
+                  className="bg-gray-300 text-black px-4 py-2 rounded hover:bg-red-500"
+                >
+                  CLOSE
+                </button>
               </div>
-
-              <br />
-              <Button onClick={handleOnClose}>CLOSE</Button>
             </div>
           </div>
         </div>
