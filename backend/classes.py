@@ -9,6 +9,12 @@ import json
 from dotenv import load_dotenv, dotenv_values
 import google.generativeai as genai
 from dataclasses import dataclass
+import icalendar
+from pathlib import Path
+import pytz
+import requests
+import datetime
+
 
 load_dotenv()
 
@@ -48,6 +54,82 @@ class AbstractDataSource:
         ans = [self.parse_event(ev, **kwargs) for ev in evs if self.parse_event(ev, **kwargs) is not None]
         return ans
 
+
+class LearnScraper(AbstractDataSource):
+    URL: str
+
+    def download_ics_file(self, url, path):
+        """
+        Download an .ics file from a given URL and save it locally.
+        """
+        # Send a GET request to the URL
+        response = requests.get(url)
+
+        # Check if the request was successful (status code 200)
+        if response.status_code == 200:
+            # Open the file and write the content
+            with open(path, 'wb') as file:
+                file.write(response.content)
+        else:
+            print(f"Failed to download the file. Status code: {response.status_code}")
+
+    def time_zone_shift(self, time):
+        """
+        Shifts time based on whether the date is in daylight saving time (1 hour shift difference)
+        """
+        timezone = pytz.UTC
+        nov_bound = datetime.datetime(datetime.datetime.now().year, 11, 1)
+        nov_bound = timezone.localize(nov_bound + datetime.timedelta(days=(6-nov_bound.weekday())))
+
+        march_bound = datetime.datetime(datetime.datetime.now().year, 3, 1)
+        march_bound = timezone.localize(march_bound + datetime.timedelta(days=(6-march_bound.weekday() + 7)))
+
+        if time >= march_bound and time < nov_bound:
+            return time + datetime.timedelta(hours=-4)
+
+        return time + datetime.timedelta(hours=-5)
+    
+    def scrape_page(self, **kwargs):
+        self.download_ics_file(self.URL, "./backend/feed.ics")
+        ics_path = Path("./backend/feed.ics")
+        with ics_path.open() as e:
+            calendar = icalendar.Calendar.from_ical(e.read())
+        events = []
+        data = {}
+        for event in calendar.walk('VEVENT'):
+            # if description doesnt exist, let it be an empty string
+            if event.get("SUMMARY") is None:
+                data["title"] = ""
+            else:
+                data["title"] = str(event.get("SUMMARY"))
+
+            if event.get("DTSTART") is None:
+                data["start_date"] = ""
+            else:
+                data["start_date"] = (self.time_zone_shift(event.get("DTSTART").dt)).strftime("%Y-%m-%d %H:%M")
+            
+            if event.get("DTEND") is None:
+                data["end_date"] = ""
+            else:
+                data["end_date"] = (self.time_zone_shift(event.get("DTEND").dt)).strftime("%Y-%m-%d %H:%M")
+            
+            if event.get("LOCATION") is None:
+                data["location"] = ""
+            else:
+                data["location"] = event.get("LOCATION")
+
+            if event.get("DESCRIPTION") is None:
+                data["description"] = ""
+            else:
+                data["description"] = event.get("DESCRIPTION")
+            events.append(data)
+            data = {}
+        return events
+    
+    def parse_event(self, ev, **kwargs):
+        return ev
+
+
 class InstagramScraper(AbstractDataSource):
     URL: str
     username: str
@@ -83,7 +165,7 @@ class InstagramScraper(AbstractDataSource):
         model = genai.GenerativeModel("gemini-1.5-flash", generation_config={"response_mime_type":"application/json", "response_schema": Event})
         for name in os.listdir(directory):
             if name.endswith((".jpg", ".png", ".jpeg")):
-                prompt = "The image provided is a poster for an event. Get information from the event in JSON format, making sure start date and end date are of form YYYY-MM-DD. No parentheses allowed. If only one date, set it equal to both start date and ewnd date. If it is not an event, return all values as empty strings."
+                prompt = "The image provided is a poster for an event. Get information from the event in JSON format, making sure start date and end date are of form YYYY-MM-DD. No parentheses allowed. If only one date, set it equal to both start date and end date. If it is not an event, return all values as empty strings."
                 response = model.generate_content([prompt, PIL.Image.open(directory + '/' + name)])
                 text = response.text
                 #print(text)
@@ -136,6 +218,3 @@ class InstagramScraper(AbstractDataSource):
         if (ev["start_date"] == "" or ev["end_date"] == ""):
             return None
         return event
-
-
-
