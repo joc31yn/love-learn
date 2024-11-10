@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { EventClickArg } from "@fullcalendar/core";
 import DeleteEventPopUp from "@/components/popup/DeleteEventPopUp";
 import { CalendarEvent } from "@/utils/types";
-
+import './cal-styling.css'
 async function fetchEvents(): Promise<EventProp[]> {
   const res = await fetch("/api/events", {
     method: "GET",

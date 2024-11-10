@@ -1,0 +1,37 @@
+
+@font-face {
+    font-family: 'Delauney';
+    src: url("../ttf/futur.ttf");
+}
+
+
+
+/* :root{
+    font-family: 'Delauney';
+} */
+
+/* .fc .fc-col-header-cell-cushion {
+    display: inline-block;
+    color: pink;
+  } */
+
+.fc .fc-toolbar-title {
+    color: black;
+    font-family: 'Delauney';
+    font-size: 4.5rem;
+}
+
+.fc .fc-event {
+    background-color: #C0CBE1;
+    border-color: #C0CBE1;
+}
+
+.fc .fc-event-main {
+    color: black; /* Dark blue color for the title */
+    font-weight: 500;
+    
+}
+
+.fc .fc-button-active{
+    background-color: pink;
+}

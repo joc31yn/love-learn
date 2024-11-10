@@ -136,6 +136,3 @@ class InstagramScraper(AbstractDataSource):
         if (ev["start_date"] == "" or ev["end_date"] == ""):
             return None
         return event
-
-
-

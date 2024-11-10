@@ -97,7 +97,7 @@ const AddEventPopUp: React.FC<AddEventPopUpProps> = ({ togglePopup, toggleAddEve
                             <Input
                                 type="text"
                                 name="start_date"
-                                placeholder="Month, Day, Year, 00:00 (24h clock)"
+                                placeholder="YYYY-MM-DD-HH-MM"
                                 value={eventData.start_date}
                                 onChange={handleInputChange}
                             />
@@ -106,7 +106,7 @@ const AddEventPopUp: React.FC<AddEventPopUpProps> = ({ togglePopup, toggleAddEve
                             <Input
                                 type="text"
                                 name="end_date"
-                                placeholder="Month, Day, Year, 00:00 (24h clock)"
+                                placeholder="YYYY-MM-DD-HH-MM"
                                 value={eventData.end_date}
                                 onChange={handleInputChange}
                             />
