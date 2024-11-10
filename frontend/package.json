@@ -27,6 +27,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "geist": "^1.2.1",
+    "google-one-tap": "^1.0.6",
     "lucide-react": "^0.436.0",
     "next": "latest",
     "next-themes": "^0.3.0",
