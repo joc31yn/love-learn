@@ -142,6 +142,13 @@ export default function Calendar() {
   };
   //##################################
 
+  // SSE 
+  const eventSource = new EventSource("/api/notify");
+
+  eventSource.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+  }
+
   return (
     <div>
       <Button onClick={addPopUp}>Add Event</Button>
