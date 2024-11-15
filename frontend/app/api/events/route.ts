@@ -1,16 +1,14 @@
 'use server';
 
 import { NextResponse } from 'next/server';
-import { createClient } from '@/utils/supabase/server';
 import { EventProp } from '@/utils/types';
 import { PostgrestError } from '@supabase/supabase-js';
+import { createClient } from '@/utils/supabase/server';
 
 export async function GET() {
   // Get the authenticated user
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
   let result: EventProp[] | null = null;
   let fetchError: PostgrestError | null = null;
   if (user) {

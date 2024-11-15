@@ -2,6 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { X, Instagram } from "lucide-react";
+import {
+  InstaIcon,
+  LocalIcon,
+  LearnIcon,
+  DevIcon,
+  IcalIcon,
+} from "@/components/icons/all_icons";
 
 interface SyncPopUpProps {
   popUpStat: boolean;
@@ -33,7 +41,10 @@ const SyncPopUp: React.FC<SyncPopUpProps> = ({
   const [learnLink, setLearnLink] = useState(String);
   const [displayICTF, setDisplayICTF] = useState(Boolean);
   const [ICLink, setICLink] = useState(String);
-
+  const [learnSynced, setLearnSynced] = useState(Boolean);
+  const [insSynced, setInsSynced] = useState(Boolean);
+  const [devSynced, setDevSynced] = useState(Boolean);
+  const [icalSynced, setIcalSynced] = useState(Boolean);
   useEffect(() => {
     // Add or remove the modal class based on the togglePopup state
     if (typeof window !== "undefined") {
@@ -45,8 +56,21 @@ const SyncPopUp: React.FC<SyncPopUpProps> = ({
     }
   }, [popUpStat]);
 
+  const instaOnClick = () => {
+    setInsSynced(true);
+    syncEvent("instagram", "");
+  };
+  const devOnClick = () => {
+    syncEvent("devpost", "");
+    setDevSynced(true);
+  };
+
   const handleOnClose = async () => {
+    setIcalSynced(false);
+    setDevSynced(false);
+    setInsSynced(false);
     setDisplayLearnTF(false);
+    setLearnSynced(false);
     setDisplayICTF(false);
     onclose();
     togglePopUpStat();
@@ -58,84 +82,108 @@ const SyncPopUp: React.FC<SyncPopUpProps> = ({
       {popUpStat && (
         <div className="modal">
           <div className="overlay">
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 leading-7 bg-gray-100 p-6 rounded w-1/2">
-              <h1 className="text-2xl font-bold text-center text-gray-800 mb-4">
-                Sync Options
-              </h1>
-              <div className="flex flex-col items-center space-y-4">
-                <Button
-                  onClick={() => syncEvent("instagram", "")} // Close the modal
-                >
-                  SYNC INSTAGRAM
-                </Button>
-                <Button
-                  onClick={() => syncEvent("devpost", "")} // Close the modal
-                >
-                  SYNC DEVPOST
-                </Button>
-                <Button
-                  onClick={() => setDisplayLearnTF(true)} // Close the modal
-                >
-                  SYNC LEARN
-                </Button>
-
-                {displayLearnTF && (
-                  <div className="flex flex-col items-center space-y-4">
-                    <Label>LEARN LINK:</Label>
-                    <Input
-                      type="text"
-                      name="learn"
-                      placeholder="enter link here"
-                      value={learnLink}
-                      onChange={(e) => setLearnLink(e.target.value)}
-                    />
-                    <Button
-                      onClick={() => {
-                        syncEvent("learn", learnLink),
-                          setLearnLink(""),
-                          setDisplayLearnTF(false);
-                      }}
-                    >
-                      CONFIRM AND SEND
-                    </Button>
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+              <div className="bg-white rounded-lg shadow-lg w-1/3 max-w-2xl">
+                <div className="flex items-center justify-between p-4 border-b">
+                  <div className="flex flex-row items-center space-x-2">
+                    <h2 className="text-2xl font-bold">Sync To</h2>
+                    <LocalIcon className="w-8 h-8" />
+                    <h2 className="text-2xl font-bold">: </h2>
+                    {insSynced && <InstaIcon className="w-8 h-8" />}
+                    {learnSynced && <LearnIcon className="w-8 h-8" />}
+                    {devSynced && <DevIcon className="w-8 h-8" />}
+                    {icalSynced && <IcalIcon className="w-8 h-8" />}
                   </div>
-                )}
 
-                <Button
-                  onClick={() => setDisplayICTF(true)} // Close the modal
-                >
-                  SYNC ICAL
-                </Button>
-
-                {displayICTF && (
+                  <Button variant="ghost" size="icon" onClick={handleOnClose}>
+                    <X className="h-4 w-4" />
+                    <span className="sr-only">Close</span>
+                  </Button>
+                </div>
+                <div className="p-6">
                   <div className="flex flex-col items-center space-y-4">
-                    <Label>ICAL LINK:</Label>
-                    <Input
-                      className="w-30"
-                      type="text"
-                      name="ical"
-                      placeholder="enter link here"
-                      value={ICLink}
-                      onChange={(e) => setICLink(e.target.value)}
-                    />
-                    <Button
-                      onClick={() => {
-                        syncEvent("ical", ICLink),
-                          setICLink(""),
-                          setDisplayICTF(false);
-                      }}
-                    >
-                      CONFIRM AND SEND
-                    </Button>
+                    <div className="flex flex-row justify-between w-4/5">
+                      <Button
+                        onClick={instaOnClick} // Close the modal
+                      >
+                        SYNC INSTAGRAM
+                      </Button>
+
+                      <InstaIcon className="w-8 h-8" />
+                    </div>
+                    <div className="flex flex-row justify-between w-4/5">
+                      <Button
+                        onClick={devOnClick} // Close the modal
+                      >
+                        SYNC DEVPOST
+                      </Button>
+                      <DevIcon className="w-8 h-8" />
+                    </div>
+                    <div className="flex flex-row justify-between w-4/5">
+                      <Button
+                        onClick={() => setDisplayLearnTF(true)} // Close the modal
+                      >
+                        SYNC LEARN
+                      </Button>
+                      <LearnIcon className="w-8 h-8" />
+                    </div>
+
+                    {displayLearnTF && (
+                      <div className="flex flex-col items-center space-y-4">
+                        <Label>LEARN LINK:</Label>
+                        <Input
+                          type="text"
+                          name="learn"
+                          placeholder="enter link here"
+                          value={learnLink}
+                          onChange={(e) => setLearnLink(e.target.value)}
+                        />
+                        <Button
+                          onClick={() => {
+                            syncEvent("learn", learnLink),
+                              setLearnLink(""),
+                              setLearnSynced(true),
+                              setDisplayLearnTF(false);
+                          }}
+                        >
+                          CONFIRM AND SEND
+                        </Button>
+                      </div>
+                    )}
+                    <div className="flex flex-row justify-between w-4/5">
+                      <Button
+                        onClick={() => setDisplayICTF(true)} // Close the modal
+                      >
+                        SYNC ICAL
+                      </Button>
+                      <IcalIcon className="w-8 h-8" />
+                    </div>
+                    {displayICTF && (
+                      <div className="flex flex-col items-center space-y-4">
+                        <Label>ICAL LINK:</Label>
+                        <Input
+                          className="w-30"
+                          type="text"
+                          name="ical"
+                          placeholder="enter link here"
+                          value={ICLink}
+                          onChange={(e) => setICLink(e.target.value)}
+                        />
+                        <Button
+                          onClick={() => {
+                            syncEvent("ical", ICLink),
+                              setICLink(""),
+                              setIcalSynced(true);
+                            setDisplayICTF(false);
+                          }}
+                        >
+                          CONFIRM AND SEND
+                        </Button>
+                      </div>
+                    )}
+                    <br />
                   </div>
-                )}
-                <br />
-                <button
-                  onClick={handleOnClose}
-                  className="bg-gray-300 text-black px-4 py-2 rounded hover:bg-red-500"
-                >
-                  CLOSE
-                </button>
+                </div>
               </div>
             </div>
           </div>
@@ -146,4 +194,3 @@ const SyncPopUp: React.FC<SyncPopUpProps> = ({
 };
 
 export default SyncPopUp;
-//TEST THIS SHIT TMR
