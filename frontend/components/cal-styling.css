@@ -1,14 +1,21 @@
 
 @font-face {
-    font-family: 'Delauney';
-    src: url("../ttf/futur.ttf");
+    font-family: 'Futura';
+    src: url("../ttf/futura\ medium\ bt.ttf");
+}
+@font-face {
+    font-family: 'Machine';
+    src: url("../ttf/PPNeueMachina-Regular.otf");
+}
+@font-face{
+    font-family: 'Open Sans';
+    src: url('../ttf/OpenSans-Regular.ttf')
 }
 
-
-
-/* :root{
-    font-family: 'Delauney';
-} */
+:root{
+    font-family: 'Open Sans';
+    font-weight: 300;
+}
 
 /* .fc .fc-col-header-cell-cushion {
     display: inline-block;
@@ -16,22 +23,33 @@
   } */
 
 .fc .fc-toolbar-title {
+    font-family: 'Futura';
     color: black;
-    font-family: 'Delauney';
-    font-size: 4.5rem;
+    font-size: 3.75rem;
 }
 
 .fc .fc-event {
-    background-color: #C0CBE1;
-    border-color: #C0CBE1;
+    background-color: rgba(30, 226, 98, 0.354);
+    border: 0.15rem solid #1DB954;
+    font-family: 'Open Sans';
 }
-
 .fc .fc-event-main {
-    color: black; /* Dark blue color for the title */
-    font-weight: 500;
-    
+    color: black; 
+    font-weight: 350;
+    text-align: center;
 }
 
-.fc .fc-button-active{
-    background-color: pink;
+
+/* month, week, day buttons */
+.fc .fc-button-group button {
+    margin-right: 1.75rem;
+}
+.fc .fc-dayGridMonth-button,
+.fc .fc-timeGridWeek-button,
+.fc .fc-timeGridDay-button{
+    border-radius: .3rem !important;
+    border: .2rem solid rgb(62, 91, 255) !important;
+    background-color: rgba(83, 108, 255, 0) !important;
+    color: black !important;
+    font-weight: bold !important;
 }

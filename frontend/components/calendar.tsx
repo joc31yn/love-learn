@@ -162,8 +162,6 @@ export default function Calendar() {
           <div>
             <b>{eventInfo.event.title}</b>
             <br />
-            <b>{eventInfo.event.extendedProps.location}</b>
-            <br />
             <b
               style={{
                 whiteSpace: "normal",
@@ -171,10 +169,10 @@ export default function Calendar() {
                 wordWrap: "break-word",
               }}
             >
-              {eventInfo.event.extendedProps.description}
             </b>
           </div>
         )}
+        
       />
       <EventPopUp modal={modal} toggleModal={toggleModal} />
       <AddEventPopUp
