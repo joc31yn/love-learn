@@ -19,4 +19,8 @@ python3 install -r requirements.txt
 python3 app.py
 ```
 
+Frontend hosted at https://everythingcalendar.org
+Backend hosted at https://backend.everythingcalendar.org
+Email team@everythingcalendar.org with questions
+
 
