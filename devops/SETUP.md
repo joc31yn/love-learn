@@ -59,5 +59,5 @@ Now, https://backend.everythingcalendar.org should work
 
 5. Test
 
-Go to SSL Labs (https://www.ssllabs.com/ssltest/) to test validity of https 
+Go to SSL Labs (https://www.ssllabs.com/ssltest/) to test validity of https <br />
 Go to nginx logs `sudo tail -f /var/log/everythingcalendar.err.log` to make sure there are no errors. 
