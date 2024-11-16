@@ -236,3 +236,36 @@ class LearnScraper(IcsScraper):
     def parse_event(self, ev, **kwargs):
         return super().parse_event(ev, **kwargs)
 
+class DevpostSource(AbstractDataSource):
+    URL = "https://devpost.com/api/hackathons?status[]=upcoming&status[]=open"
+
+    def scrape_page(self, **kwargs):
+        evs = []
+        total = 1; cur = 0; i = 0
+        while cur < total:
+            r = requests.get(self.URL + (f"&page={i}" if i > 1 else ""))
+            res = r.json()
+            evs += res["hackathons"]
+            total = res["meta"]["total_count"]
+            cur += res["meta"]["per_page"]
+        
+        return evs
+
+    def parse_event(self, ev, **kwargs):
+        dates = ev["submission_period_dates"].split("-")
+        startdate = dates[0].strip()
+        enddate = dates[1].strip()
+        startdate += enddate[-6:]
+        startdate = datetime.datetime.strptime(startdate, "%b %d, %Y").strftime("%Y-%m-%d")
+        enddate = datetime.datetime.strptime(enddate, "%b %d, %Y").strftime("%Y-%m-%d")
+        return {
+            "name": ev["title"],
+            "startdate": startdate,
+            "enddate": enddate,
+            "location": ev["displayed_location"]["location"],
+            "hybridinfo": "",
+            "url": ev["url"],
+            "bgimage": "",
+            "fgimage": ev["thumbnail_url"],
+            "source": "Devpost"
+        }
