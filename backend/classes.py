@@ -48,86 +48,16 @@ class AbstractDataSource:
 
     def parse_event(self, ev, **kwargs):
         raise NotImplementedError
+    
+    def delete_feed(self):
+        if os.path.isfile("./backend/feed.ics"):
+            os.remove("./backend/feed.ics")
 
     def get_events(self, **kwargs):
         evs = self.scrape_page(**kwargs)
         ans = [self.parse_event(ev, **kwargs) for ev in evs if self.parse_event(ev, **kwargs) is not None]
+        self.delete_feed()
         return ans
-
-
-class LearnScraper(AbstractDataSource):
-    URL: str
-
-    def download_ics_file(self, url, path):
-        """
-        Download an .ics file from a given URL and save it locally.
-        """
-        # Send a GET request to the URL
-        response = requests.get(url)
-
-        # Check if the request was successful (status code 200)
-        if response.status_code == 200:
-            # Open the file and write the content
-            with open(path, 'wb') as file:
-                file.write(response.content)
-        else:
-            print(f"Failed to download the file. Status code: {response.status_code}")
-
-    def time_zone_shift(self, time):
-        """
-        Shifts time based on whether the date is in daylight saving time (1 hour shift difference)
-        """
-        timezone = pytz.UTC
-        nov_bound = datetime.datetime(datetime.datetime.now().year, 11, 1)
-        nov_bound = timezone.localize(nov_bound + datetime.timedelta(days=(6-nov_bound.weekday())))
-
-        march_bound = datetime.datetime(datetime.datetime.now().year, 3, 1)
-        march_bound = timezone.localize(march_bound + datetime.timedelta(days=(6-march_bound.weekday() + 7)))
-
-        if time >= march_bound and time < nov_bound:
-            return time + datetime.timedelta(hours=-4)
-
-        return time + datetime.timedelta(hours=-5)
-    
-    def scrape_page(self, **kwargs):
-        self.download_ics_file(self.URL, "./backend/feed.ics")
-        ics_path = Path("./backend/feed.ics")
-        with ics_path.open() as e:
-            calendar = icalendar.Calendar.from_ical(e.read())
-        events = []
-        data = {}
-        for event in calendar.walk('VEVENT'):
-            # if description doesnt exist, let it be an empty string
-            if event.get("SUMMARY") is None:
-                data["title"] = ""
-            else:
-                data["title"] = str(event.get("SUMMARY"))
-
-            if event.get("DTSTART") is None:
-                data["start_date"] = ""
-            else:
-                data["start_date"] = (self.time_zone_shift(event.get("DTSTART").dt)).strftime("%Y-%m-%d %H:%M")
-            
-            if event.get("DTEND") is None:
-                data["end_date"] = ""
-            else:
-                data["end_date"] = (self.time_zone_shift(event.get("DTEND").dt)).strftime("%Y-%m-%d %H:%M")
-            
-            if event.get("LOCATION") is None:
-                data["location"] = ""
-            else:
-                data["location"] = event.get("LOCATION")
-
-            if event.get("DESCRIPTION") is None:
-                data["description"] = ""
-            else:
-                data["description"] = event.get("DESCRIPTION")
-            events.append(data)
-            data = {}
-        return events
-    
-    def parse_event(self, ev, **kwargs):
-        return ev
 
 
 class InstagramScraper(AbstractDataSource):
@@ -218,3 +148,91 @@ class InstagramScraper(AbstractDataSource):
         if (ev["start_date"] == "" or ev["end_date"] == ""):
             return None
         return event
+    
+
+class IcsScraper(AbstractDataSource):
+
+    def time_zone_shift(self, time):
+        """
+        Shifts time based on whether the date is in daylight saving time (1 hour shift difference)
+        """
+        timezone = pytz.UTC
+        nov_bound = datetime.datetime(datetime.datetime.now().year, 11, 1)
+        nov_bound = timezone.localize(nov_bound + datetime.timedelta(days=(6-nov_bound.weekday())))
+
+        march_bound = datetime.datetime(datetime.datetime.now().year, 3, 1)
+        march_bound = timezone.localize(march_bound + datetime.timedelta(days=(6-march_bound.weekday() + 7)))
+
+        if time >= march_bound and time < nov_bound:
+            return time + datetime.timedelta(hours=-4)
+
+        return time + datetime.timedelta(hours=-5)
+    
+    def scrape_page(self, **kwargs):
+        ics_path = Path("./backend/feed.ics")
+        with ics_path.open() as e:
+            calendar = icalendar.Calendar.from_ical(e.read())
+        events = []
+        data = {}
+        for event in calendar.walk('VEVENT'):
+            # if description doesnt exist, let it be an empty string
+            if event.get("SUMMARY") is None:
+                data["title"] = ""
+            else:
+                data["title"] = str(event.get("SUMMARY"))
+
+            if event.get("DTSTART") is None:
+                data["start_date"] = ""
+            else:
+                data["start_date"] = (self.time_zone_shift(event.get("DTSTART").dt)).strftime("%Y-%m-%d %H:%M")
+            
+            if event.get("DTEND") is None:
+                data["end_date"] = ""
+            else:
+                data["end_date"] = (self.time_zone_shift(event.get("DTEND").dt)).strftime("%Y-%m-%d %H:%M")
+            
+            if event.get("LOCATION") is None:
+                data["location"] = ""
+            else:
+                data["location"] = event.get("LOCATION")
+
+            if event.get("DESCRIPTION") is None:
+                data["description"] = ""
+            else:
+                data["description"] = event.get("DESCRIPTION")
+            events.append(data)
+            data = {}
+        return events
+    
+    def parse_event(self, ev, **kwargs):
+        return ev
+    
+
+class LearnScraper(IcsScraper):
+    URL: str
+
+    def __init__(self, URL):
+        super().__init__(URL)
+
+    def download_ics_file(self, url, path):
+        """
+        Download an .ics file from a given URL and save it locally.
+        """
+        # Send a GET request to the URL
+        response = requests.get(url)
+
+        # Check if the request was successful (status code 200)
+        if response.status_code == 200:
+            # Open the file and write the content
+            with open(path, 'wb') as file:
+                file.write(response.content)
+        else:
+            print(f"Failed to download the file. Status code: {response.status_code}")
+
+    def scrape_page(self, **kwargs):
+        self.download_ics_file(self.URL, "./backend/feed.ics")
+        return super().scrape_page(**kwargs)
+
+    def parse_event(self, ev, **kwargs):
+        return super().parse_event(ev, **kwargs)
+
