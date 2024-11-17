@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { createBrowserClient } from '@supabase/ssr';
 
 interface SyncPopUpProps {
   popUpStat: boolean;
@@ -10,11 +11,22 @@ interface SyncPopUpProps {
 }
 
 async function syncEvent(requestType: string, requestDetail: string) {
-  if (requestType === "instagram") {
-  } else if (requestType === "learn") {
-  } else if (requestType === "devpost") {
-  } else if (requestType === "ical") {
+  const response = await fetch('/api/sync', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ requestType }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    console.error('Error syncing event:', errorData.error);
+    return;
   }
+
+  const data = await response.json();
+  console.log('Sync event response:', data);
 }
 
 const SyncPopUp: React.FC<SyncPopUpProps> = ({

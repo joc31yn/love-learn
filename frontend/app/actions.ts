@@ -52,6 +52,22 @@ export const signInAction = async (formData: FormData) => {
   return redirect("/protected");
 };
 
+export const signInWithGoogleAction = async (credentialResponse: any) => {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.auth.signInWithIdToken({
+    provider: 'google',
+    token: credentialResponse.credential, // Extract the credential from the response
+  });
+
+  if (error) {
+    return encodedRedirect("error", "/sign-in", error.message);
+  }
+
+  return redirect("/protected");
+};
+
+
 export const forgotPasswordAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
   const supabase = await createClient();

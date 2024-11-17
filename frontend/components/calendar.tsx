@@ -143,11 +143,11 @@ export default function Calendar() {
   //##################################
 
   // SSE 
-  const eventSource = new EventSource("/api/notify");
+  //const eventSource = new EventSource("/api/notify");
 
-  eventSource.onmessage = (event) => {
-    const data = JSON.parse(event.data);
-  }
+  //eventSource.onmessage = (event) => {
+    //const data = JSON.parse(event.data);
+  //}
 
   return (
     <div>
@@ -183,7 +183,10 @@ export default function Calendar() {
           </div>
         )}
       />
-      <EventPopUp modal={modal} toggleModal={toggleModal} />
+      <EventPopUp 
+        event={selectedEvent}
+        modal={modal}
+        toggleModal={toggleModal} />
       <AddEventPopUp
         togglePopup={addPopup}
         toggleAddEvent={toggleAddEvent}
