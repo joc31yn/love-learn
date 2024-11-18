@@ -143,7 +143,7 @@ export default function Calendar() {
   //##################################
 
   return (
-    <div>
+    <div className="bg-stone-50">
       <Button onClick={addPopUp}>Add Event</Button>
       <Button onClick={handleDelReq}>{buttonText}</Button>
       <Button onClick={openSyncPopUp}>Sync Event</Button>
