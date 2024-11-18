@@ -17,7 +17,7 @@ interface SyncPopUpProps {
   onclose: () => void;
 }
 
-async function syncEvent(requestType: string, requestDetail: string) {
+async function syncEvent(requestType: string, requestDetail: File | null) {
   if (requestType === "instagram") {
   } else if (requestType === "learn") {
   } else if (requestType === "devpost") {
@@ -38,13 +38,14 @@ const SyncPopUp: React.FC<SyncPopUpProps> = ({
   //     description: "",
   //   };
   const [displayLearnTF, setDisplayLearnTF] = useState(Boolean);
-  const [learnLink, setLearnLink] = useState(String);
+  const [learnFile, setLearnFile] = useState<File | null>(null);
   const [displayICTF, setDisplayICTF] = useState(Boolean);
-  const [ICLink, setICLink] = useState(String);
+  const [ICFile, setICFile] = useState<File | null>(null);
   const [learnSynced, setLearnSynced] = useState(Boolean);
   const [insSynced, setInsSynced] = useState(Boolean);
   const [devSynced, setDevSynced] = useState(Boolean);
   const [icalSynced, setIcalSynced] = useState(Boolean);
+
   useEffect(() => {
     // Add or remove the modal class based on the togglePopup state
     if (typeof window !== "undefined") {
@@ -56,12 +57,24 @@ const SyncPopUp: React.FC<SyncPopUpProps> = ({
     }
   }, [popUpStat]);
 
+  const handleLearnFileChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0] || null;
+    setLearnFile(file);
+  };
+  const handleICFileChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0] || null;
+    setICFile(file);
+  };
   const instaOnClick = () => {
     setInsSynced(true);
-    syncEvent("instagram", "");
+    syncEvent("instagram", null);
   };
   const devOnClick = () => {
-    syncEvent("devpost", "");
+    syncEvent("devpost", null);
     setDevSynced(true);
   };
 
@@ -74,6 +87,7 @@ const SyncPopUp: React.FC<SyncPopUpProps> = ({
     setDisplayICTF(false);
     onclose();
     togglePopUpStat();
+    setLearnFile(null);
     // https://supabase.com/docs/reference/javascript/auth-getsession
   };
 
@@ -111,6 +125,7 @@ const SyncPopUp: React.FC<SyncPopUpProps> = ({
 
                       <InstaIcon className="w-8 h-8" />
                     </div>
+
                     <div className="flex flex-row justify-between w-4/5">
                       <Button
                         onClick={devOnClick} // Close the modal
@@ -130,24 +145,35 @@ const SyncPopUp: React.FC<SyncPopUpProps> = ({
 
                     {displayLearnTF && (
                       <div className="flex flex-col items-center space-y-4">
-                        <Label>LEARN LINK:</Label>
-                        <Input
-                          type="text"
+                        <span>Enter Calendar File From Learn:</span>
+                        <input
+                          type="file"
                           name="learn"
-                          placeholder="enter link here"
-                          value={learnLink}
-                          onChange={(e) => setLearnLink(e.target.value)}
+                          accept="*/*"
+                          onChange={handleLearnFileChange}
                         />
-                        <Button
-                          onClick={() => {
-                            syncEvent("learn", learnLink),
-                              setLearnLink(""),
-                              setLearnSynced(true),
-                              setDisplayLearnTF(false);
-                          }}
-                        >
-                          CONFIRM AND SEND
-                        </Button>
+                        <div className="flex flex-row justify-between w-4/5">
+                          <Button
+                            className="bg-white text-black hover:bg-red-500 border border-black"
+                            onClick={() => {
+                              setLearnSynced(false), setDisplayLearnTF(false);
+                            }}
+                          >
+                            CANCEL
+                          </Button>
+                          {learnFile != null && (
+                            <Button
+                              onClick={() => {
+                                syncEvent("learn", learnFile),
+                                  setLearnFile(null),
+                                  setLearnSynced(true),
+                                  setDisplayLearnTF(false);
+                              }}
+                            >
+                              CONFIRM AND SEND
+                            </Button>
+                          )}
+                        </div>
                       </div>
                     )}
                     <div className="flex flex-row justify-between w-4/5">
@@ -160,25 +186,35 @@ const SyncPopUp: React.FC<SyncPopUpProps> = ({
                     </div>
                     {displayICTF && (
                       <div className="flex flex-col items-center space-y-4">
-                        <Label>ICAL LINK:</Label>
-                        <Input
-                          className="w-30"
-                          type="text"
+                        <span>Enter Calendar File:</span>
+                        <input
+                          type="file"
                           name="ical"
-                          placeholder="enter link here"
-                          value={ICLink}
-                          onChange={(e) => setICLink(e.target.value)}
+                          accept="*/*"
+                          onChange={handleICFileChange}
                         />
-                        <Button
-                          onClick={() => {
-                            syncEvent("ical", ICLink),
-                              setICLink(""),
-                              setIcalSynced(true);
-                            setDisplayICTF(false);
-                          }}
-                        >
-                          CONFIRM AND SEND
-                        </Button>
+                        <div className="flex flex-row justify-between w-4/5">
+                          <Button
+                            className="bg-white text-black hover:bg-red-500 border border-black"
+                            onClick={() => {
+                              setIcalSynced(false), setDisplayICTF(false);
+                            }}
+                          >
+                            CANCEL
+                          </Button>
+                          {ICFile != null && (
+                            <Button
+                              onClick={() => {
+                                syncEvent("ical", ICFile),
+                                  setICFile(null),
+                                  setIcalSynced(true),
+                                  setDisplayICTF(false);
+                              }}
+                            >
+                              CONFIRM AND SEND
+                            </Button>
+                          )}
+                        </div>
                       </div>
                     )}
                     <br />
