@@ -17,7 +17,7 @@ export async function POST(req: Request) {
     const refreshToken = data.session?.refresh_token;
 
     // Make the request to the backend API
-    const backendUrl = `https://backend.everythingcalendar.org/scrape_events?username=uwcsclub&date=2024-11-01jwt=${accessToken}&refresh=${refreshToken}`;
+    const backendUrl = `http://40.233.73.84:5000/scrape_events?username=uwcsclub&date=2024-11-16&jwt=${accessToken}&refresh=${refreshToken}`;
     console.log(backendUrl);
     const backendResponse = await fetch(backendUrl, {
       method: 'POST',
