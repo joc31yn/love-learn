@@ -37,7 +37,6 @@ def scrape_events():
     else:
         file.save('feed.ics')
         scraper = IcsScraper().get_events()
-    events = scraper.get_events()
     #print("DONE")
     events_data = []
     for event in events:
@@ -49,11 +48,33 @@ def scrape_events():
             "location": event["location"],
             "description": event["description"]
         })
+    table_name = "user_events"
     try:
-        response = supabase.table("user_events").insert(events_data).execute()
+        response = supabase.table(table_name).insert(events_data).execute()
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    return jsonify({"message": "Events scraped and added successfully"}), 200
+    table_name = "your_table"
+    unique_columns = ["user_id", "start_date", "end_date", "location", "description"]
+    query = f"""
+        SELECT id
+        FROM (
+            SELECT id, ROW_NUMBER() OVER (PARTITION BY {', '.join(unique_columns)} ORDER BY id) AS rn
+            FROM {table_name}
+        ) subquery
+        WHERE rn > 1
+    """
+    response = supabase.rpc("execute_sql", {"sql": query})
+    if response.data:
+        duplicate_ids = [row['id'] for row in response.data]
+        if duplicate_ids:
+            for duplicate_id in duplicate_ids:
+                supabase.table(table_name).delete().eq("id", duplicate_id).execute()
+            print(f"Removed {len(duplicate_ids)} duplicate rows.")
+        else:
+            print("No duplicates found.")
+    else:
+        print("Failed to identify duplicates.")
+    return jsonify({"message": "Events scraped and added successfully", "duplicates", str(len(duplicate_ids))}), 200
 
 @app.route("/")
 def route():
