@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { EventClickArg } from "@fullcalendar/core";
 import DeleteEventPopUp from "@/components/popup/DeleteEventPopUp";
 import { CalendarEvent } from "@/utils/types";
+import { createBrowserClient } from '@supabase/ssr';
 
 async function fetchEvents(): Promise<EventProp[]> {
   const res = await fetch("/api/events", {
@@ -69,14 +70,6 @@ export default function Calendar() {
   useEffect(() => {
     fetchData();
   }, []);
-
-  useEffect(() => {
-    if (prevChangeCal.current === false && changeCal === true) {
-      fetchData();
-      setChangeCal(false);
-    }
-    prevChangeCal.current = changeCal;
-  }, [changeCal]);
 
   useEffect(() => {
     // This effect runs whenever delAttempt changes
@@ -148,6 +141,21 @@ export default function Calendar() {
   //eventSource.onmessage = (event) => {
     //const data = JSON.parse(event.data);
   //}
+
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
+  );
+
+  const handleInserts = (payload: any) => {
+    console.log(payload);
+    fetchData();
+  };
+
+  supabase
+    .channel("user_events")
+    .on("postgres_changes", { event: "*", schema: "public", table: "user_events" }, handleInserts)
+    .subscribe();
 
   return (
     <div>
