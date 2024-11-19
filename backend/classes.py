@@ -1,5 +1,4 @@
 import subprocess
-from datetime import datetime
 import sys
 import instaloader
 import os
@@ -14,7 +13,6 @@ from pathlib import Path
 import pytz
 import requests
 import datetime
-
 
 load_dotenv()
 
@@ -50,8 +48,8 @@ class AbstractDataSource:
         raise NotImplementedError
     
     def delete_feed(self):
-        if os.path.isfile("./backend/feed.ics"):
-            os.remove("./backend/feed.ics")
+        if os.path.isfile("./feed.ics"):
+            os.remove("./feed.ics")
 
     def get_events(self, **kwargs):
         evs = self.scrape_page(**kwargs)
@@ -70,27 +68,25 @@ class InstagramScraper(AbstractDataSource):
         super().__init__("https://instagram.com")
         self.username = username
         self.ig = instaloader.Instaloader()
+        self.ig.login("", "")
         self.date = date 
 
     def scrape_page(self, **kwargs):
         """
         Downloads Instagram posts from a user's profile.
         """
-        
         since_str = kwargs.get('since', self.date)
-        since = datetime.strptime(since_str, "%Y-%m-%d")
-        ig_profile = instaloader.Profile.from_username(self.ig.context, self.username)
-        """
-        for post in ig_profile.get_posts():
+        since = datetime.datetime.strptime(since_str, "%Y-%m-%d")
+        profile = instaloader.Profile.from_username(self.ig.context, self.username)
+        for post in profile.get_posts():
             date = post.date
             if date >= since:
                 if post.typename == 'GraphImage':
-                    self.ig.download_post(post, target=ig_profile.username)
+                    self.ig.download_post(post, target=profile.username)
             else:
                 break
-        """
         genai.configure()
-        directory = f"./{ig_profile.username}"
+        directory = f"./{profile.username}"
         events = []
         model = genai.GenerativeModel("gemini-1.5-flash", generation_config={"response_mime_type":"application/json", "response_schema": Event})
         for name in os.listdir(directory):
@@ -112,8 +108,8 @@ class InstagramScraper(AbstractDataSource):
                         data["end_date"] = data["start_date"]
                     elif data["start_date"] == "":
                         data["start_date"] = data["end_date"]
-                    start_date = datetime.strptime(data["start_date"], "%Y-%m-%d")
-                    end_date = datetime.strptime(data["end_date"], "%Y-%m-%d")
+                    start_date = datetime.datetime.strptime(data["start_date"], "%Y-%m-%d")
+                    end_date = datetime.datetime.strptime(data["end_date"], "%Y-%m-%d")
                 except (ValueError, TypeError):
                     # If date validation fails, set start_date and end_date to empty strings
                     data["start_date"] = ""
@@ -129,7 +125,7 @@ class InstagramScraper(AbstractDataSource):
         if not date_str:
             return ""
         try:
-            date_obj = datetime.strptime(date_str, '%B %d')
+            date_obj = datetime.datetime.strptime(date_str, '%B %d')
             return date_obj.strftime('%Y-%m-%d')
         except ValueError:
             return ""  # Return empty if failed to parse
@@ -151,6 +147,10 @@ class InstagramScraper(AbstractDataSource):
     
 
 class IcsScraper(AbstractDataSource):
+    URL: str
+
+    def __init__(self):
+        super().__init__("./feed.ics")
 
     def time_zone_shift(self, time):
         """
@@ -169,7 +169,7 @@ class IcsScraper(AbstractDataSource):
         return time + datetime.timedelta(hours=-5)
     
     def scrape_page(self, **kwargs):
-        ics_path = Path("./backend/feed.ics")
+        ics_path = Path(self.URL)
         with ics_path.open() as e:
             calendar = icalendar.Calendar.from_ical(e.read())
         events = []
@@ -229,15 +229,17 @@ class LearnScraper(IcsScraper):
         else:
             print(f"Failed to download the file. Status code: {response.status_code}")
 
-    def scrape_page(self, **kwargs):
-        self.download_ics_file(self.URL, "./backend/feed.ics")
+    def scrape_page(self, **kwargs):    
+        self.download_ics_file(self.URL, "./feed.ics")
         return super().scrape_page(**kwargs)
 
     def parse_event(self, ev, **kwargs):
         return super().parse_event(ev, **kwargs)
 
-class DevpostSource(AbstractDataSource):
-    URL = "https://devpost.com/api/hackathons?status[]=upcoming&status[]=open"
+class DevpostScraper(AbstractDataSource):
+    def __init__(self):
+        URL = "https://devpost.com/api/hackathons?status[]=upcoming&status[]=open"
+        super().__init__(URL)
 
     def scrape_page(self, **kwargs):
         evs = []
@@ -256,16 +258,22 @@ class DevpostSource(AbstractDataSource):
         startdate = dates[0].strip()
         enddate = dates[1].strip()
         startdate += enddate[-6:]
-        startdate = datetime.datetime.strptime(startdate, "%b %d, %Y").strftime("%Y-%m-%d")
-        enddate = datetime.datetime.strptime(enddate, "%b %d, %Y").strftime("%Y-%m-%d")
+        try:
+            startdate = datetime.datetime.strptime(startdate, "%b %d, %Y").strftime("%Y-%m-%d")
+            enddate = datetime.datetime.strptime(enddate, "%b %d, %Y").strftime("%Y-%m-%d")
+        except ValueError as e:
+            print(f"Error parsing dates: {e}")
+            return None
         return {
-            "name": ev["title"],
+            "title": ev["title"],
             "startdate": startdate,
             "enddate": enddate,
-            "location": ev["displayed_location"]["location"],
-            "hybridinfo": "",
-            "url": ev["url"],
-            "bgimage": "",
-            "fgimage": ev["thumbnail_url"],
-            "source": "Devpost"
+            "locatioyn": ev["displayed_location"]["location"],
+            "description": "",
         }
+
+if __name__ == "__main__":
+    #print(InstagramScraper(username="uwcsclub", date="2024-11-17").get_events())
+    #print(LearnScraper(URL="https://learn.uwaterloo.ca/d2l/le/calendar/feed/user/feed.ics?feedOU=1051763&token=a24z4c5slufphp3s3df84").get_events())
+    #print(DevpostScraper().get_events())
+    #print(IcsScraper().get_events())
