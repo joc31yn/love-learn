@@ -7,8 +7,8 @@ export default function Header() {
         The <span className="fancy-font">Everything</span> Calendar{" "}
       </p>
       <p className="typewriter">Like the Everything Bagel, but for your day :)</p>
-      <Link href="/events">
-        <button className="events-btn /sign-in">Sign Up</button>
+      <Link href="/sign-up">
+        <button className="events-btn">Sign Up</button>
       </Link>
     
     <ul className="circles">
