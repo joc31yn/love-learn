@@ -22,14 +22,22 @@ def scrape_events():
     jwt = request.args.get('jwt')
     refresh = request.args.get('refresh')
     tp = request.args.get('type')
+    force = requests.args.get('force', None)
     file = request.files['file']
     supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
     supabase.auth.set_session(jwt, refresh)
     user_response = supabase.auth.get_user()
     user_id = json.loads(user_response.json())["user"]["id"]
     scraper = None
+    events_data = []
     if tp == 'instagram':
+        table_name = f'{tp}_{username}_events'
+    else: 
+        table_name = f'{tp}_events'
+    if tp == 'instagram' and not force: 
         scraper = InstagramScraper(username=username, date=date).get_events()
+    elif tp == 'instagram':
+        scraper = InstagramScraper(username=username, date=date, force=True).get_events()
     elif tp == 'devpost':
         scraper = DevpostScraper().get_events()
     elif tp == 'learn':
@@ -38,22 +46,19 @@ def scrape_events():
         file.save('feed.ics')
         scraper = IcsScraper().get_events()
     #print("DONE")
-    events_data = []
     for event in events:
         events_data.append({
-            "user_id": user_id,
             "title": event["title"],
             "start_date": event["start_date"],
             "end_date": event["end_date"],
             "location": event["location"],
             "description": event["description"]
         })
-    table_name = "user_events"
     try:
         response = supabase.table(table_name).insert(events_data).execute()
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    table_name = "your_table"
+    # Remove duplicates if required
     unique_columns = ["user_id", "start_date", "end_date", "location", "description"]
     query = f"""
         SELECT id
@@ -74,7 +79,7 @@ def scrape_events():
             print("No duplicates found.")
     else:
         print("Failed to identify duplicates.")
-    return jsonify({"message": "Events scraped and added successfully", "duplicates", str(len(duplicate_ids))}), 200
+    return jsonify({"message": "Events scraped and added successfully", "duplicates": str(len(duplicate_ids))}), 200
 
 @app.route("/")
 def route():

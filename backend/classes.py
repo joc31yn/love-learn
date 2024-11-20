@@ -61,32 +61,50 @@ class AbstractDataSource:
 class InstagramScraper(AbstractDataSource):
     URL: str
     username: str
-    ig: instaloader.Instaloader
-    date: str
+    force: str
 
-    def __init__(self, username, date=None):
+    def __init__(self, username, date=None, force=False):
         super().__init__("https://instagram.com")
         self.username = username
-        self.ig = instaloader.Instaloader()
-        self.ig.login("", "")
-        self.date = date 
+        self.force = force
 
     def scrape_page(self, **kwargs):
         """
         Downloads Instagram posts from a user's profile.
         """
-        since_str = kwargs.get('since', self.date)
-        since = datetime.datetime.strptime(since_str, "%Y-%m-%d")
-        profile = instaloader.Profile.from_username(self.ig.context, self.username)
-        for post in profile.get_posts():
-            date = post.date
-            if date >= since:
-                if post.typename == 'GraphImage':
-                    self.ig.download_post(post, target=profile.username)
-            else:
-                break
+        if force: 
+            payload = {
+                "target": "instagram_graphql_user_posts",
+                "username": "uwcsclub",
+                "count": 12
+            }
+            headers = {
+                "accept": "application/json",
+                "content-type": "application/json",
+                "authorization": f"Basic {os.getenv('BEARER')}"
+            }
+            response = requests.post(url, json=payload, headers=headers)
+            js = json.loads(response.text)
+            with open('results.txt', 'wb') as f:
+                f.write(response.text)
+        else:
+            js = json.loads('results.txt') # Get cached result if time not too far apart
+        edges = js["results"][0]['content']['data']['user']['edge_owner_to_timeline_media']['edges']
+        display_urls = [edge['node']['display_url'] for edge in edges]
+        directory = f'./{self.username}'
+        os.makedirs(directory, exist_ok=True)
+        for i, url in enumerate(display_urls):
+            try:
+                response = requests.get(url, stream=True) 
+                response.raise_for_status() 
+                file_name = os.path.join(output_folder, f"image_{i+1}.jpg") 
+                with open(file_name, 'wb') as file:
+                    for chunk in response.iter_content(chunk_size=8192): 
+                        file.write(chunk)
+                print(f"Downloaded: {file_name}")
+            except requests.exceptions.RequestException as e:
+                print(f"Failed to download {url}: {e}")
         genai.configure()
-        directory = f"./{profile.username}"
         events = []
         model = genai.GenerativeModel("gemini-1.5-flash", generation_config={"response_mime_type":"application/json", "response_schema": Event})
         for name in os.listdir(directory):
@@ -250,7 +268,6 @@ class DevpostScraper(AbstractDataSource):
             evs += res["hackathons"]
             total = res["meta"]["total_count"]
             cur += res["meta"]["per_page"]
-        
         return evs
 
     def parse_event(self, ev, **kwargs):
@@ -272,7 +289,7 @@ class DevpostScraper(AbstractDataSource):
             "description": "",
         }
 
-if __name__ == "__main__":
+#if __name__ == "__main__":
     #print(InstagramScraper(username="uwcsclub", date="2024-11-17").get_events())
     #print(LearnScraper(URL="https://learn.uwaterloo.ca/d2l/le/calendar/feed/user/feed.ics?feedOU=1051763&token=a24z4c5slufphp3s3df84").get_events())
     #print(DevpostScraper().get_events())
