@@ -1,0 +1,110 @@
+
+@font-face {
+    font-family: 'Futura';
+    src: url("../ttf/futura\ medium\ bt.ttf");
+}
+@font-face {
+    font-family: 'Machine';
+    src: url("../ttf/PPNeueMachina-Regular.otf");
+}
+@font-face{
+    font-family: 'Open Sans';
+    src: url('../ttf/OpenSans-Regular.ttf')
+}
+
+:root{
+    font-family: 'Open Sans';
+    font-weight: 300;
+}
+
+/* .fc .fc-col-header-cell-cushion {
+    display: inline-block;
+    color: pink;
+  } */
+
+.fc .fc-toolbar-title {
+    font-family: 'Futura';
+    color: black;
+    font-size: 3.75rem;
+}
+
+.fc .fc-event {
+    background-color: rgba(227, 48, 215, 0.25);
+    border: 0.15rem solid #e63de6;
+    /* background-color: rgba(30, 226, 98, 0.354);
+    border: 0.15rem solid #1DB954; */
+    font-family: 'Open Sans';
+}
+.fc .fc-event-main {
+    color: black; 
+    font-weight: 350;
+    text-align: center;
+}
+
+
+/* month, week, day buttons */
+.fc .fc-toolbar-chunk:nth-of-type(3) {
+    border-radius: 1.5rem;
+    background-color: #465d9d !important;
+    position: relative;
+    right: 2rem;
+    top: 0.5rem;
+}
+.fc .fc-button-group button {
+    background-color: #465d9d !important;
+    border-color: #465d9d !important;
+}
+ /* {
+    border-top-left-radius: 0.5rem;
+    border-bottom-left-radius: 0.5rem;
+} */
+.fc .fc-dayGridMonth-button,
+.fc .fc-timeGridWeek-button,
+.fc .fc-timeGridDay-button{
+    border-radius: 1.5rem !important;
+    background-color: rgba(83, 108, 255, 0) !important;
+    color: white !important;
+}
+
+/* .fc .fc-dayGridMonth-button:active,
+.fc .fc-timeGridWeek-button:active,
+.fc .fc-timeGridDay-button:active {
+    background-color: #7484b4 !important;
+    border-color: #7484b4 !important;
+} */
+
+
+/*<today>*/
+.fc .fc-toolbar-chunk:nth-of-type(1) {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    top: 0.75rem;
+}
+.fc .fc-button-group:nth-child(2) button {
+    background-color: transparent !important;
+    border-color: transparent !important;
+    margin-right: 4rem;
+    color: #465d9d !important;
+}
+.fc .fc-next-button{
+    padding-bottom: 0.5rem;
+}
+.fc .fc-today-button{
+    width: 5vw;
+    margin-left: 3.6rem;
+    margin-bottom: -2.5rem !important;
+    font-size: 1.04rem !important;
+    border-radius: 0rem !important;
+    background-color: transparent !important;
+    border-color: transparent !important;
+    padding-top: 0.3rem;
+    color: #465d9d !important;
+    z-index: 1200 !important;
+    font-weight: bold !important;
+}
+
+
+.fc .fc-day-today{
+    background-color: rgb(167, 195, 255,0.2) !important;
+}

@@ -11,11 +11,11 @@ import Script from 'next/script';
 
 // Use instead of _app.tsx
 export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
+    children,
+  }: {
+    children: React.ReactNode;
+  }) {
+    return (
     <>
       <Script
         src="https://accounts.google.com/gsi/client"
@@ -33,7 +33,7 @@ export default function RootLayout({
             >
               {/* NAVBAR START */}
               <main className="min-h-screen flex flex-col items-center flex-1 w-full">
-                <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
+                <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16 bg-blue-100">
                   <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
                     <div className="flex gap-5 items-center font-semibold">
                     </div>
@@ -41,11 +41,11 @@ export default function RootLayout({
                   </div>
                 </nav>
 
-                {/* Default show children */}
-                {children}
+                  {/* Default show children */}
+                  {children}
 
                 {/* FOOTER START */}
-                <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 py-4">
+                <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 py-4 bg-blue-100">
                   <p>
                     Powered by{" "}
                     <a

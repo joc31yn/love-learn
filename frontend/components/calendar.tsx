@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { EventClickArg } from "@fullcalendar/core";
 import DeleteEventPopUp from "@/components/popup/DeleteEventPopUp";
 import { CalendarEvent } from "@/utils/types";
+import './cal-styling.css'
 import { createBrowserClient } from '@supabase/ssr';
 
 async function fetchEvents(): Promise<EventProp[]> {
@@ -158,7 +159,7 @@ export default function Calendar() {
     .subscribe();
 
   return (
-    <div>
+    <div className="bg-stone-50">
       <Button onClick={addPopUp}>Add Event</Button>
       <Button onClick={handleDelReq}>{buttonText}</Button>
       <Button onClick={openSyncPopUp}>Sync Event</Button>
@@ -177,8 +178,6 @@ export default function Calendar() {
           <div>
             <b>{eventInfo.event.title}</b>
             <br />
-            <b>{eventInfo.event.extendedProps.location}</b>
-            <br />
             <b
               style={{
                 whiteSpace: "normal",
@@ -186,10 +185,10 @@ export default function Calendar() {
                 wordWrap: "break-word",
               }}
             >
-              {eventInfo.event.extendedProps.description}
             </b>
           </div>
         )}
+        
       />
       <EventPopUp 
         event={selectedEvent}
