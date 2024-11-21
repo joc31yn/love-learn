@@ -161,18 +161,6 @@ export default function Calendar() {
         eventContent={(eventInfo) => (
           <div>
             <b>{eventInfo.event.title}</b>
-            <br />
-            <b>{eventInfo.event.extendedProps.location}</b>
-            <br />
-            <b
-              style={{
-                whiteSpace: "normal",
-                flexWrap: "wrap",
-                wordWrap: "break-word",
-              }}
-            >
-              {eventInfo.event.extendedProps.description}
-            </b>
           </div>
         )}
       />
