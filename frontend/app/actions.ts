@@ -49,7 +49,7 @@ export const signInAction = async (formData: FormData) => {
     return encodedRedirect("error", "/sign-in", error.message);
   }
 
-  return redirect("/protected");
+  return redirect("/events");
 };
 
 export const signInWithGoogleAction = async (credentialResponse: any) => {
@@ -64,7 +64,7 @@ export const signInWithGoogleAction = async (credentialResponse: any) => {
     return encodedRedirect("error", "/sign-in", error.message);
   }
 
-  return redirect("/protected");
+  return redirect("/events");
 };
 
 

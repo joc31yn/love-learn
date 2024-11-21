@@ -3,7 +3,7 @@ import { createClient } from '@/utils/supabase/server';
 
 export async function POST(req: Request) {
   try {
-    const { requestType } = await req.json();
+    const { type: requestType, detail: requestDetail } = await req.json();
 
     console.log(requestType);
 
@@ -16,8 +16,14 @@ export async function POST(req: Request) {
     const accessToken = data.session?.access_token;
     const refreshToken = data.session?.refresh_token;
 
+    var backendUrl = "";
     // Make the request to the backend API
-    const backendUrl = `http://40.233.73.84:5000/scrape_events?username=uwcsclub&date=2024-11-16&jwt=${accessToken}&refresh=${refreshToken}`;
+    if (requestType === "devpost") {
+      backendUrl = `https://backend.everythingcalendar.org/scrape_events?type=${requestType}&jwt=${accessToken}&refresh=${refreshToken}`;
+    }
+    else {
+      backendUrl = `https://backend.everythingcalendar.org/scrape_events?type=${requestType}&username=${requestDetail}type=devpost&jwt=${accessToken}&refresh=${refreshToken}`;
+    }
     console.log(backendUrl);
     const backendResponse = await fetch(backendUrl, {
       method: 'POST',
