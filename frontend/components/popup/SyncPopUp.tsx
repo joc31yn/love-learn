@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { X, Instagram } from "lucide-react";
+import { X } from "lucide-react";
+
 import {
   InstaIcon,
   LocalIcon,
@@ -17,12 +16,24 @@ interface SyncPopUpProps {
   onclose: () => void;
 }
 
-async function syncEvent(requestType: string, requestDetail: File | null) {
-  if (requestType === "instagram") {
-  } else if (requestType === "learn") {
-  } else if (requestType === "devpost") {
-  } else if (requestType === "ical") {
+async function syncEvent(requestType: string, requestDetail: any) {
+  console.log(requestDetail);
+  const response = await fetch('/api/sync', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ "type": requestType, "detail": requestDetail }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    console.error('Error syncing event:', errorData.error);
+    return;
   }
+
+  const data = await response.json();
+  console.log('Sync event response:', data);
 }
 
 const SyncPopUp: React.FC<SyncPopUpProps> = ({
@@ -38,13 +49,13 @@ const SyncPopUp: React.FC<SyncPopUpProps> = ({
   //     description: "",
   //   };
   const [displayLearnTF, setDisplayLearnTF] = useState(Boolean);
-  const [learnFile, setLearnFile] = useState<File | null>(null);
+  const [learnLink, setLearnLink] = useState("");
   const [displayICTF, setDisplayICTF] = useState(Boolean);
   const [ICFile, setICFile] = useState<File | null>(null);
   const [learnSynced, setLearnSynced] = useState(Boolean);
   const [insSynced, setInsSynced] = useState(Boolean);
   const [devSynced, setDevSynced] = useState(Boolean);
-  const [icalSynced, setIcalSynced] = useState(Boolean);
+  const [icalSynced, setIcalSynced] = useState(Boolean);  
 
   useEffect(() => {
     // Add or remove the modal class based on the togglePopup state
@@ -57,12 +68,13 @@ const SyncPopUp: React.FC<SyncPopUpProps> = ({
     }
   }, [popUpStat]);
 
-  const handleLearnFileChange = (
+  const handleLearnLinkChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const file = event.target.files?.[0] || null;
-    setLearnFile(file);
+    const value = event.target.value || ""; // Use `value` to capture input text
+    setLearnLink(value); // Update the state
   };
+
   const handleICFileChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -71,10 +83,10 @@ const SyncPopUp: React.FC<SyncPopUpProps> = ({
   };
   const instaOnClick = () => {
     setInsSynced(true);
-    syncEvent("instagram", null);
+    syncEvent("instagram", "uwcsclub");
   };
   const devOnClick = () => {
-    syncEvent("devpost", null);
+    syncEvent("devpost", "");
     setDevSynced(true);
   };
 
@@ -87,7 +99,7 @@ const SyncPopUp: React.FC<SyncPopUpProps> = ({
     setDisplayICTF(false);
     onclose();
     togglePopUpStat();
-    setLearnFile(null);
+    setLearnLink("");
     // https://supabase.com/docs/reference/javascript/auth-getsession
   };
 
@@ -147,10 +159,9 @@ const SyncPopUp: React.FC<SyncPopUpProps> = ({
                       <div className="flex flex-col items-center space-y-4">
                         <span>Enter Calendar File From Learn:</span>
                         <input
-                          type="file"
+                          type="text"
                           name="learn"
-                          accept="*/*"
-                          onChange={handleLearnFileChange}
+                          onChange={handleLearnLinkChange}
                         />
                         <div className="flex flex-row justify-between w-4/5">
                           <Button
@@ -161,11 +172,11 @@ const SyncPopUp: React.FC<SyncPopUpProps> = ({
                           >
                             CANCEL
                           </Button>
-                          {learnFile != null && (
+                          {learnLink != null && (
                             <Button
                               onClick={() => {
-                                syncEvent("learn", learnFile),
-                                  setLearnFile(null),
+                                syncEvent("learn", learnLink),
+                                  setLearnLink(""),
                                   setLearnSynced(true),
                                   setDisplayLearnTF(false);
                               }}

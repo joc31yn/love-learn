@@ -7,13 +7,17 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { emptyEventData, EventProp } from "@/utils/types";
 import AddEventPopUp from "@/components/popup/AddEventPopUp";
-import SyncPopUp from "./popup/SyncPopUp";
+import ModifyPopUp from "@/components/popup/ModifyPopUp";
+import SyncPopUp from "@/components/popup/SyncPopUp";
+import DeleteEventPopUp from "@/components/popup/DeleteEventPopUp";
 import EventPopUp from "@/components/popup/EventPopUp";
 import { Button } from "@/components/ui/button";
 import { EventClickArg } from "@fullcalendar/core";
-import DeleteEventPopUp from "@/components/popup/DeleteEventPopUp";
 import { CalendarEvent } from "@/utils/types";
 import './cal-styling.css'
+import { createBrowserClient } from '@supabase/ssr';
+import Link from 'next/link';
+
 async function fetchEvents(): Promise<EventProp[]> {
   const res = await fetch("/api/events", {
     method: "GET",
@@ -34,12 +38,11 @@ export default function Calendar() {
   const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
   // States for delete events:
   const [delAttempt, setDelAttempt] = useState(false);
-  const [changeCal, setChangeCal] = useState(false);
   const [modal, setModal] = useState(false);
   const [addPopup, setAddPopup] = useState(false);
+  const [modifyPopup, setModifyPopup] = useState(false);
   const [deletePopup, setDeletePopup] = useState(false);
   const [buttonText, setButtonText] = useState("Delete Event");
-  const prevChangeCal = useRef(changeCal);
   // State for eventProp
   const [selectedEvent, setSelectedEvent] = useState(emptyEventData);
   // State for SyncPopUp
@@ -69,14 +72,6 @@ export default function Calendar() {
   useEffect(() => {
     fetchData();
   }, []);
-
-  useEffect(() => {
-    if (prevChangeCal.current === false && changeCal === true) {
-      fetchData();
-      setChangeCal(false);
-    }
-    prevChangeCal.current = changeCal;
-  }, [changeCal]);
 
   useEffect(() => {
     // This effect runs whenever delAttempt changes
@@ -115,7 +110,10 @@ export default function Calendar() {
 
   const toggleAddEvent = () => {
     setAddPopup(false);
-    setChangeCal(true);
+  };
+
+  const toggleModifyEvent = () => {
+    setModifyPopup(false);
   };
 
   const toggleRemoveEvent = () => {
@@ -123,16 +121,21 @@ export default function Calendar() {
     setAddPopup(false);
     setDeletePopup(false);
     setDelAttempt(false);
+    setModifyPopup(false);
+    setSyncPopUpDisp(false);
   };
 
   const toggleDeleteEvent = () => {
     setDeletePopup(false);
     setDelAttempt(false);
-    setChangeCal(true);
   };
 
   const addPopUp = () => {
     setAddPopup(true);
+  };
+
+  const modifyPopUp = () => {
+    setModifyPopup(true);
   };
 
   //Handles the text and delete status in the button for deleting events
@@ -142,11 +145,35 @@ export default function Calendar() {
   };
   //##################################
 
+  // SSE 
+  //const eventSource = new EventSource("/api/notify");
+
+  //eventSource.onmessage = (event) => {
+    //const data = JSON.parse(event.data);
+  //}
+
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
+  );
+
+  const handleInserts = (payload: any) => {
+    console.log(payload);
+    fetchData();
+  };
+
+  supabase
+    .channel("user_events")
+    .on("postgres_changes", { event: "*", schema: "public", table: "user_events" }, handleInserts)
+    .subscribe();
+
   return (
     <div className="bg-stone-50">
       <Button onClick={addPopUp}>Add Event</Button>
       <Button onClick={handleDelReq}>{buttonText}</Button>
       <Button onClick={openSyncPopUp}>Sync Event</Button>
+      <Button onClick={modifyPopUp}>Modify Event</Button>
+      <Link href="/protected/reset-password"> <Button> Reset Password </Button></Link>
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         initialView={"dayGridMonth"}
@@ -174,7 +201,10 @@ export default function Calendar() {
         )}
         
       />
-      <EventPopUp modal={modal} toggleModal={toggleModal} />
+      <EventPopUp 
+        event={selectedEvent}
+        modal={modal}
+        toggleModal={toggleModal} />
       <AddEventPopUp
         togglePopup={addPopup}
         toggleAddEvent={toggleAddEvent}
@@ -191,6 +221,12 @@ export default function Calendar() {
         togglePopUpStat={toggleSyncDisp}
         onclose={syncOnClose}
       ></SyncPopUp>
+      <ModifyPopUp
+        event={selectedEvent}
+        togglePopup={modifyPopup}
+        toggleModifyEvent={toggleModifyEvent}
+        toggleRemoveEvent={toggleRemoveEvent}
+      ></ModifyPopUp>
     </div>
   );
 }
