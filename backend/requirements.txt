@@ -5,3 +5,6 @@ typing-extensions
 python-dotenv
 google-generativeai
 supabase
+icalendar
+pytz
+gunicorn
