@@ -17,6 +17,7 @@ interface SyncPopUpProps {
 }
 
 async function syncEvent(requestType: string, requestDetail: string) {
+  console.log(requestDetail);
   const response = await fetch('/api/sync', {
     method: 'POST',
     headers: {
@@ -81,10 +82,10 @@ const SyncPopUp: React.FC<SyncPopUpProps> = ({
   };
   const instaOnClick = () => {
     setInsSynced(true);
-    syncEvent("instagram", null);
+    syncEvent("instagram", "");
   };
   const devOnClick = () => {
-    syncEvent("devpost", null);
+    syncEvent("devpost", "");
     setDevSynced(true);
   };
 
@@ -174,7 +175,7 @@ const SyncPopUp: React.FC<SyncPopUpProps> = ({
                           {learnFile != null && (
                             <Button
                               onClick={() => {
-                                syncEvent("learn", learnFile),
+                                syncEvent("learn", ""),
                                   setLearnFile(null),
                                   setLearnSynced(true),
                                   setDisplayLearnTF(false);
@@ -215,7 +216,7 @@ const SyncPopUp: React.FC<SyncPopUpProps> = ({
                           {ICFile != null && (
                             <Button
                               onClick={() => {
-                                syncEvent("ical", ICFile),
+                                syncEvent("ical", ""),
                                   setICFile(null),
                                   setIcalSynced(true),
                                   setDisplayICTF(false);
