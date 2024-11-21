@@ -1,13 +1,11 @@
 import Hero from "@/components/hero";
-import Link from 'next/link';
+import '../components/landing.css'
 
 export default async function Index() {
   return (
     <>
       <Hero />
-      <Link href="/events">
-        <button>Go to Events</button>
-      </Link>
+      
     </>
   );
 }

@@ -26,11 +26,8 @@ export default function RootLayout({
           >
             {/* NAVBAR START */}
             <main className="min-h-screen flex flex-col items-center flex-1 w-full">
-              <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
+              <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16 bg-blue-100">
                 <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
-                  <Link href="/addevent">Add Event</Link>
-                  <Link href="/deleteevent">Delete Event</Link>
-                  <Link href="/integration">Integration</Link>
                   <div className="flex gap-5 items-center font-semibold">
                   </div>
                   {!hasEnvVars ? <EnvVarWarning /> : <HeaderAuth />}
@@ -41,7 +38,7 @@ export default function RootLayout({
               {children}
 
               {/* FOOTER START */}
-              <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 py-4">
+              <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 py-4 bg-blue-100">
                 <p>
                   Powered by{" "}
                   <a

@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { EventClickArg } from "@fullcalendar/core";
 import DeleteEventPopUp from "@/components/popup/DeleteEventPopUp";
 import { CalendarEvent } from "@/utils/types";
-
+import './cal-styling.css'
 async function fetchEvents(): Promise<EventProp[]> {
   const res = await fetch("/api/events", {
     method: "GET",
@@ -143,7 +143,7 @@ export default function Calendar() {
   //##################################
 
   return (
-    <div>
+    <div className="bg-stone-50">
       <Button onClick={addPopUp}>Add Event</Button>
       <Button onClick={handleDelReq}>{buttonText}</Button>
       <Button onClick={openSyncPopUp}>Sync Event</Button>
@@ -161,8 +161,18 @@ export default function Calendar() {
         eventContent={(eventInfo) => (
           <div>
             <b>{eventInfo.event.title}</b>
+            <br />
+            <b
+              style={{
+                whiteSpace: "normal",
+                flexWrap: "wrap",
+                wordWrap: "break-word",
+              }}
+            >
+            </b>
           </div>
         )}
+        
       />
       <EventPopUp modal={modal} toggleModal={toggleModal} />
       <AddEventPopUp
