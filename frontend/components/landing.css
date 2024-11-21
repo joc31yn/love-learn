@@ -14,6 +14,11 @@
         typing 3.5s steps(38, end),
         blink-caret 0.65s step-end infinite;
     font-family: 'Open Sans';
+    font-weight: 500;
+    box-shadow: 0.5rem 0.3rem 1.2rem rgba(56, 82, 255, 1);
+    background-color: white;
+    color: black;
+    transform: skew(-15deg); /* Skew the div */
 }
 
 /* The typing effect */
@@ -59,7 +64,7 @@
 .font {
     /* font-family: 'Open Sans'; */
     font-family: 'Montserrat';
-    background-image: url("night_sky.jpg");
+    background-image: url("winter.jpg");
     background-size: cover;
     color: white;
 }
@@ -70,9 +75,10 @@
     font-weight: bold;
     display: inline-block;
     animation: wave 2s infinite;
-    background:linear-gradient(to bottom right, #f43e54, #f46e9b, #ffa3c0, #6ee1bd, #32c999, #2181a5);
+    background: #171ad6;
+    /* linear-gradient(to bottom right, #f43e54, #f46e9b, #ffa3c0, #6ee1bd, #32c999, #2181a5); */
     -webkit-background-clip: text;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.2), 0 0 20px rgba(255, 255, 255, 0.35), 0 0 30px rgba(255, 255, 255, 0.5);
+    text-shadow: 0 0 2rem rgba(93, 121, 229, 0.9);
     color: transparent;
     z-index: 200;
 }
@@ -97,10 +103,13 @@
 .events-btn {
     font-weight: bold;
     color: white;
-    background-color: #5dc4b3;
+    background-color: #3852ff;
     padding: 0.5rem 0.8rem;
     border-radius: 0.5rem;
     z-index: 100 !important;
+}
+.events-btn:hover {
+    background-color: #ffa538;
 }
 
 @keyframes animate {

@@ -6,7 +6,7 @@ export default function Header() {
       <p className="text-3xl mt-5 lg:text-7xl !leading-tight mx-auto max-w-xl text-center">
         The <span className="fancy-font">Everything</span> Calendar{" "}
       </p>
-      <p className="typewriter">Like the Everything Bagel, but for your day :)</p>
+      <p className="typewriter"> Like the Everything Bagel, but for your day :) </p>
       <Link href="/sign-up">
         <button className="events-btn">Sign Up</button>
       </Link>
