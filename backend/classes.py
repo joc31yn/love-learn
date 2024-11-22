@@ -61,9 +61,10 @@ class AbstractDataSource:
 class InstagramScraper(AbstractDataSource):
     URL: str
     username: str
-    force: str
+    force: bool
+    test: bool
 
-    def __init__(self, username, date=None, force=False):
+    def __init__(self, username, date=None, force=False, test=True):
         super().__init__("https://instagram.com")
         self.username = username
         self.force = force
@@ -72,7 +73,7 @@ class InstagramScraper(AbstractDataSource):
         """
         Downloads Instagram posts from a user's profile.
         """
-        if force: 
+        if self.force: 
             payload = {
                 "target": "instagram_graphql_user_posts",
                 "username": "uwcsclub",
@@ -85,10 +86,12 @@ class InstagramScraper(AbstractDataSource):
             }
             response = requests.post(url, json=payload, headers=headers)
             js = json.loads(response.text)
-            with open('results.txt', 'wb') as f:
+            with open(f'results/{username}.txt', 'wb') as f:
                 f.write(response.text)
         else:
-            js = json.loads('results.txt') # Get cached result if time not too far apart
+            with open('results/{username}.txt', 'r') as f:
+                contents = f.read()
+            js = json.loads(contents) # Get cached result if time not too far apart
         edges = js["results"][0]['content']['data']['user']['edge_owner_to_timeline_media']['edges']
         display_urls = [edge['node']['display_url'] for edge in edges]
         directory = f'./{self.username}'
@@ -97,43 +100,48 @@ class InstagramScraper(AbstractDataSource):
             try:
                 response = requests.get(url, stream=True) 
                 response.raise_for_status() 
-                file_name = os.path.join(output_folder, f"image_{i+1}.jpg") 
+                file_name = os.path.join(directory, f"image_{i+1}.jpg") 
                 with open(file_name, 'wb') as file:
                     for chunk in response.iter_content(chunk_size=8192): 
                         file.write(chunk)
                 print(f"Downloaded: {file_name}")
             except requests.exceptions.RequestException as e:
                 print(f"Failed to download {url}: {e}")
-        genai.configure()
         events = []
-        model = genai.GenerativeModel("gemini-1.5-flash", generation_config={"response_mime_type":"application/json", "response_schema": Event})
-        for name in os.listdir(directory):
-            if name.endswith((".jpg", ".png", ".jpeg")):
-                prompt = "The image provided is a poster for an event. Get information from the event in JSON format, making sure start date and end date are of form YYYY-MM-DD. No parentheses allowed. If only one date, set it equal to both start date and end date. If it is not an event, return all values as empty strings."
-                response = model.generate_content([prompt, PIL.Image.open(directory + '/' + name)])
-                text = response.text
-                #print(text)
-                data = {}
-                # JSON text sanity check here
-                try: 
-                    data = json.loads(text)
-                except json.JSONDecodeError:
-                    # If JSON parsing fails, repair the JSON
-                        repaired_text = repair_json(text)
-                        data = json.loads(repaired_text)
-                try:
-                    if data["end_date"] == "":
-                        data["end_date"] = data["start_date"]
-                    elif data["start_date"] == "":
-                        data["start_date"] = data["end_date"]
-                    start_date = datetime.datetime.strptime(data["start_date"], "%Y-%m-%d")
-                    end_date = datetime.datetime.strptime(data["end_date"], "%Y-%m-%d")
-                except (ValueError, TypeError):
-                    # If date validation fails, set start_date and end_date to empty strings
-                    data["start_date"] = ""
-                    data["end_date"] = ""
-                print(data)
-                events.append(data)
+        if not self.test: 
+            genai.configure()
+            model = genai.GenerativeModel("gemini-1.5-flash", generation_config={"response_mime_type":"application/json", "response_schema": Event})
+            for name in os.listdir(directory):
+                if name.endswith((".jpg", ".png", ".jpeg")):
+                    prompt = "The image provided is a poster for an event. Get information from the event in JSON format, making sure start date and end date are of form YYYY-MM-DD. No parentheses allowed. If only one date, set it equal to both start date and end date. If it is not an event, return all values as empty strings."
+                    response = model.generate_content([prompt, PIL.Image.open(directory + '/' + name)])
+                    text = response.text
+                    #print(text)
+                    data = {}
+                    # JSON text sanity check here
+                    try: 
+                        data = json.loads(text)
+                    except json.JSONDecodeError:
+                        # If JSON parsing fails, repair the JSON
+                            repaired_text = repair_json(text)
+                            data = json.loads(repaired_text)
+                    try:
+                        if data["end_date"] == "":
+                            data["end_date"] = data["start_date"]
+                        elif data["start_date"] == "":
+                            data["start_date"] = data["end_date"]
+                        start_date = datetime.datetime.strptime(data["start_date"], "%Y-%m-%d")
+                        end_date = datetime.datetime.strptime(data["end_date"], "%Y-%m-%d")
+                    except (ValueError, TypeError):
+                        # If date validation fails, set start_date and end_date to empty strings
+                        data["start_date"] = ""
+                        data["end_date"] = ""
+                    print(data)
+                    events.append(data)
+        else:
+            with open(f'cached/{username}.txt') as f:
+                cached = f.read()
+            events = ast.literal_eval(cached)
         return events
 
     def parse_date(self, date_str):

@@ -6,9 +6,11 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import Image from "next/image";
 import cal_image from "@/lib/cal_image2.jpg";
+import GoogleLogin from "@/components/googlelogin";
 
 export default async function Login(props: { searchParams: Promise<Message> }) {
   const searchParams = await props.searchParams;
+
   return (
     <div className="flex p-5">
       <div className="w-1/2 relative">
@@ -32,6 +34,7 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
                 Sign up
               </Link>
             </p>
+            <GoogleLogin />
             <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
               <Label htmlFor="email">Email</Label>
               <Input name="email" placeholder="you@example.com" required />

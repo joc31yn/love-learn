@@ -32,6 +32,6 @@ export default async function ForgotPassword(props: {
         </div>
       </form>
       <SmtpMessage />
-    </>
+    </> 
   );
 }
