@@ -80,7 +80,7 @@ const AddEventPopUp: React.FC<AddEventPopUpProps> = ({
         <div className="modal">
           <div className="overlay">
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-              <div className="bg-white rounded-lg shadow-lg w-1/3 max-w-2xl">
+              <div className="bg-gradient-to-r from-pink-400 to-[rgba(20,64,180,0.6)] rounded-lg shadow-lg w-1/3 max-w-2xl">
                 <div className="flex items-center justify-between p-4 border-b">
                   <h2 className="text-2xl font-bold">Add Event To Cal</h2>
                   <Button
@@ -100,6 +100,7 @@ const AddEventPopUp: React.FC<AddEventPopUpProps> = ({
                     placeholder="Event title"
                     value={eventData.title}
                     onChange={handleInputChange}
+                    className="bg-gray-100 text-black hover:bg-white"
                   />
 
                   <Label>Start Date:</Label>
@@ -109,6 +110,7 @@ const AddEventPopUp: React.FC<AddEventPopUpProps> = ({
                     placeholder="Month, Day, Year, 00:00 (24h clock)"
                     value={eventData.start_date}
                     onChange={handleInputChange}
+                    className="bg-gray-100 text-black hover:bg-white"
                   />
 
                   <Label>End Date:</Label>
@@ -118,6 +120,7 @@ const AddEventPopUp: React.FC<AddEventPopUpProps> = ({
                     placeholder="Month, Day, Year, 00:00 (24h clock)"
                     value={eventData.end_date}
                     onChange={handleInputChange}
+                    className="bg-gray-100 text-black hover:bg-white"
                   />
 
                   <Label>Location:</Label>
@@ -127,6 +130,7 @@ const AddEventPopUp: React.FC<AddEventPopUpProps> = ({
                     placeholder="Event location"
                     value={eventData.location}
                     onChange={handleInputChange}
+                    className="bg-gray-100 text-black hover:bg-white"
                   />
 
                   <Label>Description:</Label>
@@ -136,6 +140,7 @@ const AddEventPopUp: React.FC<AddEventPopUpProps> = ({
                     placeholder="Event description"
                     value={eventData.description}
                     onChange={handleInputChange}
+                    className="bg-gray-100 text-black hover:bg-white"
                   />
 
                   <br />

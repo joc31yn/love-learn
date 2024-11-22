@@ -10,6 +10,8 @@ import {
   DevIcon,
   IcalIcon,
 } from "@/components/icons/all_icons";
+import Image from "next/image";
+import gear_img from "@/lib/gears.png";
 
 interface SyncPopUpProps {
   popUpStat: boolean;
@@ -63,9 +65,7 @@ const SyncPopUp: React.FC<SyncPopUpProps> = ({
     const file = event.target.files?.[0] || null;
     setLearnFile(file);
   };
-  const handleICFileChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleICFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] || null;
     setICFile(file);
   };
@@ -97,7 +97,7 @@ const SyncPopUp: React.FC<SyncPopUpProps> = ({
         <div className="modal">
           <div className="overlay">
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-              <div className="bg-white rounded-lg shadow-lg w-1/3 max-w-2xl">
+              <div className="bg-gradient-to-r from-cyan-200 to-blue-50 rounded-lg shadow-lg w-1/3 max-w-2xl">
                 <div className="flex items-center justify-between p-4 border-b">
                   <div className="flex flex-row items-center space-x-2">
                     <h2 className="text-2xl font-bold">Sync To</h2>
