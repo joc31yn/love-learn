@@ -1,5 +1,8 @@
 Linter tests must pass before your PR is merged. 
 
+TODO: 
+cloudform, terraform, kubernetes (EKS), rn only ECS and ECR
+
 Run frontend: 
 
 ```
